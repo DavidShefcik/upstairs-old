@@ -1,9 +1,9 @@
 {
-  "name": "your-application-name",
+  "name": "upstairs",
   "version": "1.0.0",
   "private": true,
   "main": "index.js",
-  "repository": "git@github.com:DavidShefcik/your-application-name.git",
+  "repository": "git@github.com:DavidShefcik/upstairs.git",
   "author": "DavidShefcik <davidshefcik@gmail.com>",
   "license": "MIT",
   "devDependencies": {

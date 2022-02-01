@@ -2,7 +2,7 @@ version: "3"
 
 services:
   reverse-proxy:
-    container_name: "your-application-name-reverse-proxy"
+    container_name: "upstairs-reverse-proxy"
     image: traefik:v2.2
     command: --api.insecure=true --providers.docker
     ports:
@@ -14,7 +14,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   postgres:
-    container_name: "your-application-name-postgres"
+    container_name: "upstairs-postgres"
     image: "postgres:11"
     ports:
       - "127.0.0.1:5432:5432"
@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: password
 
   api:
-    container_name: "your-application-name-api"
+    container_name: "upstairs-api"
     image: node:16
     command: yarn start:dev
     ports:
@@ -37,12 +37,12 @@ services:
     depends_on:
       - postgres
     labels:
-      - "traefik.http.routers.api.rule=Host(`your-application-name.localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api.rule=Host(`upstairs.localhost`) && PathPrefix(`/api`)"
       - "traefik.http.routers.api.middlewares=api-stripprefix"
       - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api"
 
   frontend:
-    container_name: "your-application-name-frontend"
+    container_name: "upstairs-frontend"
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -56,7 +56,7 @@ services:
       - api
       - reverse-proxy
     labels:
-      - "traefik.http.routers.frontend.rule=Host(`your-application-name.localhost`)"
+      - "traefik.http.routers.frontend.rule=Host(`upstairs.localhost`)"
 
 volumes:
   pgdata: {}

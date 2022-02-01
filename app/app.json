@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "your-application-name",
-    "slug": "your-application-name",
+    "name": "upstairs",
+    "slug": "upstairs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
