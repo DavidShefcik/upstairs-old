@@ -1,0 +1,14 @@
+{
+  "name": "your-application-name",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "repository": "git@github.com:DavidShefcik/your-application-name.git",
+  "author": "DavidShefcik <davidshefcik@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^16.1.0",
+    "@commitlint/config-conventional": "^16.0.0",
+    "husky": "^7.0.4"
+  }
+}

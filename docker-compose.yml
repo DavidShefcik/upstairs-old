@@ -1,0 +1,62 @@
+version: "3"
+
+services:
+  reverse-proxy:
+    container_name: "your-application-name-reverse-proxy"
+    image: traefik:v2.2
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  postgres:
+    container_name: "your-application-name-postgres"
+    image: "postgres:11"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - "pgdata:/var/lib/postgresql/data/"
+    environment:
+      POSTGRES_PASSWORD: password
+
+  api:
+    container_name: "your-application-name-api"
+    image: node:16
+    command: yarn start:dev
+    ports:
+      - "127.0.0.1:1337:1337"
+    volumes:
+      - ./api:/srv/api:rw
+    working_dir: /srv/api
+    env_file:
+      - ./api/.env
+    depends_on:
+      - postgres
+    labels:
+      - "traefik.http.routers.api.rule=Host(`your-application-name.localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api.middlewares=api-stripprefix"
+      - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api"
+
+  frontend:
+    container_name: "your-application-name-frontend"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/srv/frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - api
+      - reverse-proxy
+    labels:
+      - "traefik.http.routers.frontend.rule=Host(`your-application-name.localhost`)"
+
+volumes:
+  pgdata: {}
