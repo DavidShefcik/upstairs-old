@@ -1,39 +1,32 @@
 import { Injectable } from '@nestjs/common';
 
 import { Name } from '~/graphql';
+import { PrismaService } from '~/modules/utils/prisma';
 
 @Injectable()
 export class NamesService {
-  private names: Name[] = [
-    {
-      id: '1',
-      name: 'David',
-    },
-    {
-      id: '2',
-      name: 'Beta',
-    },
-  ];
+  constructor(private readonly prismaService: PrismaService) {}
 
-  constructor() {}
-
-  getAll(): Name[] {
-    return this.names;
+  async getAll(): Promise<Name[]> {
+    return await this.prismaService.names.findMany({});
   }
 
-  getName(requestedName: string): Name | undefined {
-    const foundName = this.names.find(({ name }) => name === requestedName);
+  async getName(requestedName: string): Promise<Name | undefined> {
+    const foundName = await this.prismaService.names.findFirst({
+      where: {
+        name: requestedName,
+      },
+    });
 
     return foundName;
   }
 
-  createName(name: string): Name {
-    const newName: Name = {
-      id: new Date().getTime().toString(),
-      name,
-    };
-
-    this.names.push(newName);
+  async createName(name: string): Promise<Name> {
+    const newName = await this.prismaService.names.create({
+      data: {
+        name,
+      },
+    });
 
     return newName;
   }

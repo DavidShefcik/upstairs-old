@@ -1,3 +1,3 @@
-export { NamesModule } from './names.module';
-export { NamesService } from './names.service';
-export { NamesResolver } from './names.resolver';
+export * from './names.module';
+export * from './names.service';
+export * from './names.resolver';

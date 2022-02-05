@@ -9,12 +9,12 @@ export class NamesResolver {
   constructor(private readonly namesService: NamesService) {}
 
   @Query('allNames')
-  getAllNames(): Name[] {
-    return this.namesService.getAll();
+  async getAllNames(): Promise<Name[]> {
+    return await this.namesService.getAll();
   }
 
   @Query('name')
-  getName(@Args('name') name: string): Name | void {
+  async getName(@Args('name') name: string): Promise<Name | void> {
     const foundName = this.namesService.getName(name);
 
     if (!foundName) {
@@ -25,7 +25,7 @@ export class NamesResolver {
   }
 
   @Mutation()
-  createName(@Args('name') name: string) {
-    return this.namesService.createName(name);
+  async createName(@Args('name') name: string) {
+    return await this.namesService.createName(name);
   }
 }
