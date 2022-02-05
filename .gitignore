@@ -51,3 +51,4 @@ web-build/
 
 # macOS
 .DS_Store
+*.txt
