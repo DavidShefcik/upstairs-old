@@ -1,0 +1,13 @@
+type Query {
+  allNames: [Name!]!
+  name(name: String!): Name
+}
+
+type Mutation {
+  createName(name: String!): Name!
+}
+
+type Name {
+  id: ID!
+  name: String!
+}
