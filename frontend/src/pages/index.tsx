@@ -3,6 +3,7 @@ import { Spinner, Text, Button } from "@chakra-ui/react";
 
 import CreateName from "~/components/names/CreateName";
 import Name from "~/components/names/Name";
+import useIsMobile from "~/hooks/useIsMobile";
 
 interface NamesQueryResult {
   allNames: Name[];
@@ -20,6 +21,7 @@ const GET_NAMES_QUERY = gql`
 export default function HomePage() {
   const { data, loading, error, refetch } =
     useQuery<NamesQueryResult>(GET_NAMES_QUERY);
+  const isMobile = useIsMobile();
 
   const handleRefetch = async () => {
     await refetch();
@@ -30,6 +32,7 @@ export default function HomePage() {
 
   return (
     <>
+      <p>Is Mobile: {isMobile.toString()}</p>
       <CreateName />
       <Button colorScheme="brand" onClick={handleRefetch}>
         Refetch
