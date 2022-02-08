@@ -1,6 +1,10 @@
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ChakraProvider } from "@chakra-ui/react";
 
+import { theme } from "~/constants/theme";
 import Navigation from "./Navigation";
+
+import "~/assets/global.css";
 
 const client = new ApolloClient({
   uri: `${__API_URL__}/graphql`,
@@ -10,7 +14,9 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <Navigation />
+      <ChakraProvider theme={theme}>
+        <Navigation />
+      </ChakraProvider>
     </ApolloProvider>
   );
 }
