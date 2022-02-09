@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Layout from "./Layout";
 import HomePage from "~/pages/index";
+import LoginPage from "~/pages/Login";
 import NotFound from "~/pages/NotFound";
 
 export default function Navigation() {
@@ -10,6 +11,7 @@ export default function Navigation() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
