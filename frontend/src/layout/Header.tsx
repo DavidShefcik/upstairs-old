@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
-import { Flex, Text, Link as ChakraLink, HStack } from "@chakra-ui/react";
+import { Flex, Link as ChakraLink, HStack, CSSObject } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
 import { unauthenticatedNavLinks } from "~/constants/links";
 import useIsMobile from "~/hooks/useIsMobile";
 
+export const HEADER_HEIGHT = "60px";
+
 const HAMBURGER_ICON_SIZE = 8;
+
+const LINK_ACTION_STYLE: CSSObject = {
+  textDecoration: "none",
+  textColor: "gray.100",
+};
 
 function RightLinks() {
   // TODO: Authenticated links
@@ -21,10 +28,8 @@ function RightLinks() {
           textColor="gray.200"
           textDecoration="none"
           fontWeight="bold"
-          _hover={{
-            textDecoration: "none",
-            textColor: "gray.100",
-          }}
+          _hover={LINK_ACTION_STYLE}
+          _focus={LINK_ACTION_STYLE}
         >
           {text}
         </ChakraLink>
@@ -67,7 +72,7 @@ export default function Header() {
       justifyContent="space-between"
       alignItems="center"
       backgroundColor="brand.100"
-      height="60px"
+      height={HEADER_HEIGHT}
       position="sticky"
       left={0}
       top={0}
@@ -81,10 +86,8 @@ export default function Header() {
         fontWeight="bold"
         fontStyle="italic"
         color="gray.100"
-        _hover={{
-          textDecoration: "none",
-          color: "gray.100",
-        }}
+        _hover={LINK_ACTION_STYLE}
+        _focus={LINK_ACTION_STYLE}
       >
         Upstairs
       </ChakraLink>
