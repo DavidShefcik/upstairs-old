@@ -1,30 +1,101 @@
-import { FormEvent, ReactNode } from "react";
-import { Flex, VStack, Text, Button } from "@chakra-ui/react";
+import { FormEvent, ReactElement, Dispatch, SetStateAction } from "react";
+import { Link } from "react-router-dom";
+import {
+  Flex,
+  VStack,
+  Text,
+  Button,
+  InputProps,
+  FormControlProps,
+  FormControl,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  Link as ChakraLink,
+} from "@chakra-ui/react";
+import { DocumentNode, useMutation } from "@apollo/client";
 
 import useIsMobile from "~/hooks/useIsMobile";
+import { ILink } from "~/constants/links";
+import { isValidString } from "~/utils/strings";
 
-interface Props {
+type BaseAuthenticationInputProps = InputProps &
+  Omit<FormControlProps, "onChange"> & {
+    label: string;
+    name: string;
+    error: string;
+    disabled?: boolean;
+  };
+type AuthenticationErrors<T extends {}> = Record<
+  keyof Partial<T>,
+  Dispatch<SetStateAction<string>>
+>;
+interface BaseAuthenticationField {
+  fieldName: string;
+  isRequired: boolean;
+}
+interface BaseAuthenticationProps<T extends {}> {
   title: string;
-  isSubmitting: boolean;
-  children: ReactNode;
-  onSubmit(): Promise<void>;
+  children:
+    | ReactElement<BaseAuthenticationInputProps & { name: keyof T }>
+    | Array<ReactElement<BaseAuthenticationInputProps & { name: keyof T }>>;
+  data: T;
+  fields: Record<keyof T, BaseAuthenticationField>;
+  mutation: DocumentNode;
+  setErrors: AuthenticationErrors<T>;
+  links?: ILink[];
 }
 
-const MOBILE_CONTAINER_WIDTH = "80%";
-const DESKTOP_CONTAINER_WIDTH = "40%";
+const MOBILE_CONTAINER_WIDTH = "93%";
+const DESKTOP_CONTAINER_WIDTH = "33%";
+const MOBILE_FORM_PADDING_X = "4";
+const DESKTOP_FORM_PADDING_X = "8";
 
-export default function BaseAuthentication({
+export default function BaseAuthentication<T extends {}>({
   title,
-  isSubmitting,
   children,
-  onSubmit,
-}: Props) {
+  data,
+  fields,
+  mutation,
+  setErrors,
+  links,
+}: BaseAuthenticationProps<T>) {
   const isMobile = useIsMobile();
+
+  const [sendData, { loading, error }] = useMutation(mutation);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    await onSubmit();
+    // Validate inputs
+    const errors: Partial<Record<keyof T, string>> = {};
+
+    // Check if inputs are blank
+    for (const field in fields) {
+      const { fieldName, isRequired } = fields[field];
+      const value = data[field];
+
+      if (isRequired && !isValidString(value)) {
+      }
+    }
+
+    // Set error messages
+    if (Object.keys(errors).length > 0) {
+      for (const key in errors) {
+        const errorMessage = errors[key];
+
+        if (errorMessage) {
+          setErrors[key](errorMessage);
+        }
+      }
+
+      return;
+    }
+
+    // Check each input for a valid string
+    await sendData({
+      variables: data,
+    });
   };
 
   return (
@@ -39,7 +110,8 @@ export default function BaseAuthentication({
         backgroundColor="gray.100"
         width={isMobile ? MOBILE_CONTAINER_WIDTH : DESKTOP_CONTAINER_WIDTH}
         borderRadius="5"
-        padding="8"
+        paddingY="8"
+        paddingX={isMobile ? MOBILE_FORM_PADDING_X : DESKTOP_FORM_PADDING_X}
         boxShadow="lg"
       >
         <Text
@@ -53,12 +125,44 @@ export default function BaseAuthentication({
         <form noValidate onSubmit={handleSubmit} style={{ width: "100%" }}>
           <VStack spacing="5" width="100%">
             {children}
-            <Button type="submit" isLoading={isSubmitting} colorScheme="brand">
+            <Button
+              type="submit"
+              isLoading={loading}
+              colorScheme="brand"
+              width="100%"
+            >
               {title}
             </Button>
           </VStack>
         </form>
+        <VStack spacing="2">
+          {links?.map(({ path, text }) => (
+            <ChakraLink key={path} as={Link} to={path} title={text}>
+              {text}
+            </ChakraLink>
+          ))}
+        </VStack>
       </VStack>
     </Flex>
+  );
+}
+
+export function BaseAuthenticationInput(props: BaseAuthenticationInputProps) {
+  const { label, name, error, disabled } = props;
+
+  return (
+    <FormControl {...props} isInvalid={!!error} isDisabled={disabled}>
+      <FormLabel htmlFor={name}>{label}</FormLabel>
+      <Input
+        {...props}
+        id={name}
+        borderColor="gray.400"
+        focusBorderColor="brand.600"
+        _hover={{
+          borderColor: "gray.500",
+        }}
+      />
+      {error && <FormErrorMessage>{error}</FormErrorMessage>}
+    </FormControl>
   );
 }
