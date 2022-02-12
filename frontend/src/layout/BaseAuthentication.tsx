@@ -26,7 +26,7 @@ type BaseAuthenticationInputProps = InputProps &
     error: string;
     disabled?: boolean;
   };
-type AuthenticationErrors<T extends {}> = Record<
+type AuthenticationErrors<T> = Record<
   keyof Partial<T>,
   Dispatch<SetStateAction<string>>
 >;
@@ -34,7 +34,8 @@ interface BaseAuthenticationField {
   fieldName: string;
   isRequired: boolean;
 }
-interface BaseAuthenticationProps<T extends {}> {
+
+interface BaseAuthenticationProps<T, R> {
   title: string;
   children:
     | ReactElement<BaseAuthenticationInputProps & { name: keyof T }>
@@ -43,6 +44,9 @@ interface BaseAuthenticationProps<T extends {}> {
   fields: Record<keyof T, BaseAuthenticationField>;
   mutation: DocumentNode;
   setErrors: AuthenticationErrors<T>;
+  isSubmitting: boolean;
+  setIsSubmitting: Dispatch<SetStateAction<boolean>>;
+  onSuccess(data: R): void;
   links?: ILink[];
 }
 
@@ -51,21 +55,34 @@ const DESKTOP_CONTAINER_WIDTH = "33%";
 const MOBILE_FORM_PADDING_X = "4";
 const DESKTOP_FORM_PADDING_X = "8";
 
-export default function BaseAuthentication<T extends {}>({
+/**
+ * T is an interface containing the names of the
+ * inputs as key value pairs. R is the type of
+ * the response when the mutation is successful
+ */
+export default function BaseAuthentication<
+  T extends { [K in keyof T]: string },
+  R = undefined
+>({
   title,
   children,
   data,
   fields,
   mutation,
   setErrors,
+  isSubmitting,
+  setIsSubmitting,
+  onSuccess,
   links,
-}: BaseAuthenticationProps<T>) {
+}: BaseAuthenticationProps<T, R>) {
   const isMobile = useIsMobile();
 
   const [sendData, { loading, error }] = useMutation(mutation);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    setIsSubmitting(true);
 
     // Validate inputs
     const errors: Partial<Record<keyof T, string>> = {};
@@ -76,6 +93,7 @@ export default function BaseAuthentication<T extends {}>({
       const value = data[field];
 
       if (isRequired && !isValidString(value)) {
+        errors[field] = `${fieldName} is required!`;
       }
     }
 
@@ -89,13 +107,45 @@ export default function BaseAuthentication<T extends {}>({
         }
       }
 
+      setIsSubmitting(false);
+
       return;
     }
 
-    // Check each input for a valid string
-    await sendData({
-      variables: data,
-    });
+    try {
+      const response = await sendData({
+        variables: data,
+      });
+
+      setIsSubmitting(false);
+
+      onSuccess(response.data);
+    } catch (error) {
+      console.log("error", error);
+
+      setAllErrors("Something happened! Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const setAllErrors = (errorMessage: string) => {
+    const errors: Partial<Record<keyof T, string>> = {};
+
+    // Check if inputs are blank
+    for (const field in fields) {
+      errors[field] = errorMessage;
+    }
+
+    // Set error messages
+    if (Object.keys(errors).length > 0) {
+      for (const key in errors) {
+        const errorMessage = errors[key];
+
+        if (errorMessage) {
+          setErrors[key](errorMessage);
+        }
+      }
+    }
   };
 
   return (
@@ -127,7 +177,7 @@ export default function BaseAuthentication<T extends {}>({
             {children}
             <Button
               type="submit"
-              isLoading={loading}
+              isLoading={loading || isSubmitting}
               colorScheme="brand"
               width="100%"
             >

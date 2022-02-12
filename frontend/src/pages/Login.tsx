@@ -15,6 +15,10 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
+interface LoginResponse {
+  token: string;
+}
+
 export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
@@ -23,8 +27,15 @@ export default function Login() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  const onSuccess = (data: LoginResponse) => {
+    const { token } = data;
+
+    console.log({ token });
+  };
+
   return (
-    <BaseAuthentication<{ email: string; password: string }>
+    <BaseAuthentication<{ email: string; password: string }, LoginResponse>
+      {...{ isSubmitting, setIsSubmitting, onSuccess }}
       title="Login"
       links={loginFormLinks}
       data={{
