@@ -164,7 +164,7 @@ export default function Register() {
       />
       <Text fontSize="sm">
         By clicking "Register" you agree to our{" "}
-        <ChakraLink as={Link} to="/tos" title="Terms of Service">
+        <ChakraLink as={Link} to="/tos" title="Terms of Service" color="brand">
           terms
         </ChakraLink>
       </Text>

@@ -193,7 +193,13 @@ export default function BaseAuthentication<
         </form>
         <VStack spacing="2">
           {links?.map(({ path, text }) => (
-            <ChakraLink key={path} as={Link} to={path} title={text}>
+            <ChakraLink
+              key={path}
+              as={Link}
+              to={path}
+              title={text}
+              color="brand"
+            >
               {text}
             </ChakraLink>
           ))}
