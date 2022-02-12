@@ -15,6 +15,10 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
+interface LoginFields {
+  email: string;
+  password: string;
+}
 interface LoginResponse {
   token: string;
 }
@@ -34,7 +38,7 @@ export default function Login() {
   };
 
   return (
-    <BaseAuthentication<{ email: string; password: string }, LoginResponse>
+    <BaseAuthentication<LoginFields, LoginResponse>
       {...{ isSubmitting, setIsSubmitting, onSuccess }}
       title="Login"
       links={loginFormLinks}
@@ -65,7 +69,7 @@ export default function Login() {
         error={emailError}
         disabled={isSubmitting}
         maxLength={INPUT_SETTINGS.email.maxLength}
-        autoComplete="username"
+        autoComplete="email"
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         autoFocus

@@ -12,6 +12,7 @@ import {
   Input,
   FormErrorMessage,
   Link as ChakraLink,
+  TextProps,
 } from "@chakra-ui/react";
 import { DocumentNode, useMutation } from "@apollo/client";
 
@@ -39,7 +40,11 @@ interface BaseAuthenticationProps<T, R> {
   title: string;
   children:
     | ReactElement<BaseAuthenticationInputProps & { name: keyof T }>
-    | Array<ReactElement<BaseAuthenticationInputProps & { name: keyof T }>>;
+    | ReactElement<TextProps>
+    | Array<
+        | ReactElement<BaseAuthenticationInputProps & { name: keyof T }>
+        | ReactElement<TextProps>
+      >;
   data: T;
   fields: Record<keyof T, BaseAuthenticationField>;
   mutation: DocumentNode;
