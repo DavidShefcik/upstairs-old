@@ -76,6 +76,7 @@ export default function Header() {
       position="sticky"
       left={0}
       top={0}
+      zIndex={100}
     >
       <ChakraLink
         as={Link}

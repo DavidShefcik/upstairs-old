@@ -159,6 +159,7 @@ export default function BaseAuthentication<
       backgroundColor="brand.100"
       justifyContent="center"
       alignItems="center"
+      paddingY="50"
     >
       <VStack
         spacing="5"
