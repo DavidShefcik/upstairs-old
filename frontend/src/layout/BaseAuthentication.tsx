@@ -38,6 +38,7 @@ interface BaseAuthenticationField {
 
 interface BaseAuthenticationProps<T, R> {
   title: string;
+  submitButtonText?: string;
   children:
     | ReactElement<BaseAuthenticationInputProps & { name: keyof T }>
     | ReactElement<TextProps>
@@ -70,6 +71,7 @@ export default function BaseAuthentication<
   R = undefined
 >({
   title,
+  submitButtonText = title,
   children,
   data,
   fields,
@@ -187,7 +189,7 @@ export default function BaseAuthentication<
               colorScheme="brand"
               width="100%"
             >
-              {title}
+              {submitButtonText}
             </Button>
           </VStack>
         </form>

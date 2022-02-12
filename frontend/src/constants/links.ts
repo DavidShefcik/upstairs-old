@@ -31,3 +31,10 @@ export const registerFormLinks: ILink[] = [
     path: "/login",
   },
 ];
+
+export const forgotPasswordFormLinks: ILink[] = [
+  {
+    text: "Go Back",
+    path: "/login",
+  },
+];
