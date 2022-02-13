@@ -62,7 +62,7 @@ interface BaseAuthenticationProps<T, R> {
   setErrors: AuthenticationErrors<T>;
   isSubmitting: boolean;
   setIsSubmitting: Dispatch<SetStateAction<boolean>>;
-  onSuccess(data: R): void;
+  onSuccess?(data: R): void;
   links?: ILink[];
 }
 
@@ -130,16 +130,17 @@ export default function BaseAuthentication<
     }
 
     try {
-      const response = await sendData({
+      await sendData({
         variables: data,
+        onCompleted: (data: R) => {
+          setIsSubmitting(false);
+
+          if (onSuccess) {
+            onSuccess(data);
+          }
+        },
       });
-
-      setIsSubmitting(false);
-
-      onSuccess(response.data);
     } catch (error) {
-      console.log("error", error);
-
       setAllErrors("Something happened! Please try again.");
       setIsSubmitting(false);
     }
