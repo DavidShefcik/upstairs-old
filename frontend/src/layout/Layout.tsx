@@ -1,12 +1,17 @@
 import { Outlet } from "react-router-dom";
 import { Flex } from "@chakra-ui/react";
 
+import MobileMenuContextProvider from "~/context/ui/MobileMenu";
 import Header, { HEADER_HEIGHT } from "./Header";
+import MobileMenu from "./MobileMenu";
 
 export default function Layout() {
   return (
     <>
-      <Header />
+      <MobileMenuContextProvider>
+        <Header />
+        <MobileMenu />
+      </MobileMenuContextProvider>
       <Flex
         flexDirection="column"
         width="100%"

@@ -4,6 +4,7 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 
 import { unauthenticatedNavLinks } from "~/constants/links";
 import useIsMobile from "~/hooks/useIsMobile";
+import { useMobileMenuContext } from "~/context/ui/MobileMenu";
 
 export const HEADER_HEIGHT = "60px";
 
@@ -39,9 +40,10 @@ function RightLinks() {
 }
 
 function HamburgerMenu() {
+  const { setIsOpen } = useMobileMenuContext();
+
   const handleIconClick = () => {
-    // TODO: Toggle side drawer
-    console.log("Hamburger menu click");
+    setIsOpen(true);
   };
 
   return (
