@@ -1,4 +1,10 @@
-import { FormEvent, ReactElement, Dispatch, SetStateAction } from "react";
+import {
+  FormEvent,
+  Dispatch,
+  SetStateAction,
+  ReactNode,
+  ReactChild,
+} from "react";
 import { Link } from "react-router-dom";
 import {
   Flex,
@@ -12,21 +18,31 @@ import {
   Input,
   FormErrorMessage,
   Link as ChakraLink,
-  TextProps,
+  PinInput,
+  PinInputField,
+  HStack,
+  PinInputProps,
 } from "@chakra-ui/react";
 import { DocumentNode, useMutation } from "@apollo/client";
+import _omit from "lodash.omit";
 
 import useIsMobile from "~/hooks/useIsMobile";
 import { ILink } from "~/constants/links";
 import { isValidString } from "~/utils/strings";
 
-type BaseAuthenticationInputProps = InputProps &
-  Omit<FormControlProps, "onChange"> & {
-    label: string;
-    name: string;
-    error: string;
-    disabled?: boolean;
-  };
+type BaseAuthenticationInput<T extends InputProps | PinInputProps> = Omit<
+  FormControlProps,
+  "onChange"
+> & {
+  label: string;
+  name: string;
+  error: string;
+  disabled?: boolean;
+} & Omit<T, "children">;
+type BaseAuthenticationInputProps<T> = BaseAuthenticationInput<T> & {
+  centerLabel?: boolean;
+  children: ReactChild;
+};
 type AuthenticationErrors<T> = Record<
   keyof Partial<T>,
   Dispatch<SetStateAction<string>>
@@ -39,13 +55,7 @@ interface BaseAuthenticationField {
 interface BaseAuthenticationProps<T, R> {
   title: string;
   submitButtonText?: string;
-  children:
-    | ReactElement<BaseAuthenticationInputProps & { name: keyof T }>
-    | ReactElement<TextProps>
-    | Array<
-        | ReactElement<BaseAuthenticationInputProps & { name: keyof T }>
-        | ReactElement<TextProps>
-      >;
+  children: ReactNode;
   data: T;
   fields: Record<keyof T, BaseAuthenticationField>;
   mutation: DocumentNode;
@@ -57,7 +67,7 @@ interface BaseAuthenticationProps<T, R> {
 }
 
 const MOBILE_CONTAINER_WIDTH = "93%";
-const DESKTOP_CONTAINER_WIDTH = "33%";
+const DESKTOP_CONTAINER_WIDTH = "450px";
 const MOBILE_FORM_PADDING_X = "4";
 const DESKTOP_FORM_PADDING_X = "8";
 
@@ -211,22 +221,66 @@ export default function BaseAuthentication<
   );
 }
 
-export function BaseAuthenticationInput(props: BaseAuthenticationInputProps) {
-  const { label, name, error, disabled } = props;
+const BASE_AUTHENTICATION_INPUT_STYLING = {
+  borderColor: "gray.400",
+  focusBorderColor: "brand.600",
+  _hover: {
+    borderColor: "gray.500",
+  },
+};
+
+function BaseAuthenticationInput<T>(props: BaseAuthenticationInputProps<T>) {
+  const { label, name, error, disabled, children, centerLabel } = props;
+
+  const propsWithoutInvalidDOMValues = _omit(props, ["centerLabel"]);
 
   return (
-    <FormControl {...props} isInvalid={!!error} isDisabled={disabled}>
-      <FormLabel htmlFor={name}>{label}</FormLabel>
-      <Input
-        {...props}
-        id={name}
-        borderColor="gray.400"
-        focusBorderColor="brand.600"
-        _hover={{
-          borderColor: "gray.500",
-        }}
-      />
+    <FormControl
+      {...propsWithoutInvalidDOMValues}
+      isInvalid={!!error}
+      isDisabled={disabled}
+    >
+      <FormLabel htmlFor={name} textAlign={centerLabel ? "center" : "left"}>
+        {label}
+      </FormLabel>
+      {children}
       {error && <FormErrorMessage>{error}</FormErrorMessage>}
     </FormControl>
+  );
+}
+
+export function BaseAuthenticationTextInput(
+  props: BaseAuthenticationInput<InputProps>
+) {
+  const { name } = props;
+
+  return (
+    <BaseAuthenticationInput<InputProps> {...props}>
+      <Input {...props} {...BASE_AUTHENTICATION_INPUT_STYLING} id={name} />
+    </BaseAuthenticationInput>
+  );
+}
+
+export function BaseAuthenticationPinInput(
+  props: BaseAuthenticationInput<PinInputProps>
+) {
+  const propsWithoutInvalidDOMValues = _omit(props, ["onComplete"]);
+
+  return (
+    <BaseAuthenticationInput<PinInputProps>
+      {...propsWithoutInvalidDOMValues}
+      centerLabel
+    >
+      <HStack spacing="3" width="100%" justifyContent="center">
+        <PinInput otp {...propsWithoutInvalidDOMValues}>
+          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} autoFocus />
+          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
+          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
+          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
+          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
+          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
+        </PinInput>
+      </HStack>
+    </BaseAuthenticationInput>
   );
 }

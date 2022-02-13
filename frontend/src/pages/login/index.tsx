@@ -2,7 +2,7 @@ import { useState } from "react";
 import { gql } from "@apollo/client";
 
 import BaseAuthentication, {
-  BaseAuthenticationInput,
+  BaseAuthenticationTextInput,
 } from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { loginFormLinks } from "~/constants/links";
@@ -62,7 +62,7 @@ export default function Login() {
         },
       }}
     >
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="email"
         label="Email Address"
         name="email"
@@ -75,7 +75,7 @@ export default function Login() {
         autoFocus
         isRequired
       />
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="password"
         label="Password"
         name="password"

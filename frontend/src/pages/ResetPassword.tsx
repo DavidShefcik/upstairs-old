@@ -4,7 +4,7 @@ import { gql } from "@apollo/client";
 import { Text, Link as ChakraLink } from "@chakra-ui/react";
 
 import BaseAuthentication, {
-  BaseAuthenticationInput,
+  BaseAuthenticationTextInput,
 } from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 
@@ -62,7 +62,7 @@ export default function ResetPassword() {
         },
       }}
     >
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="password"
         label="Password"
         name="password"
@@ -75,7 +75,7 @@ export default function ResetPassword() {
         isRequired
         autoFocus
       />
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="password"
         label="Confirm Password"
         name="confirmPassword"

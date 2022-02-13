@@ -4,7 +4,7 @@ import { gql } from "@apollo/client";
 import { Text, Link as ChakraLink } from "@chakra-ui/react";
 
 import BaseAuthentication, {
-  BaseAuthenticationInput,
+  BaseAuthenticationTextInput,
 } from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { registerFormLinks } from "~/constants/links";
@@ -101,7 +101,7 @@ export default function Register() {
         },
       }}
     >
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="text"
         label="First Name"
         name="firstName"
@@ -114,7 +114,7 @@ export default function Register() {
         autoFocus
         isRequired
       />
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="text"
         label="Last Name"
         name="lastName"
@@ -126,7 +126,7 @@ export default function Register() {
         onChange={(event) => setLastName(event.target.value)}
         isRequired
       />
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="email"
         label="Email Address"
         name="email"
@@ -138,7 +138,7 @@ export default function Register() {
         onChange={(event) => setEmail(event.target.value)}
         isRequired
       />
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="password"
         label="Password"
         name="password"
@@ -150,7 +150,7 @@ export default function Register() {
         onChange={(event) => setPassword(event.target.value)}
         isRequired
       />
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="password"
         label="Confirm Password"
         name="confirmPassword"

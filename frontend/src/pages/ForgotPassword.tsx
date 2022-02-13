@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { gql } from "@apollo/client";
-import { Text, Link as ChakraLink } from "@chakra-ui/react";
 
 import BaseAuthentication, {
-  BaseAuthenticationInput,
+  BaseAuthenticationTextInput,
 } from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { forgotPasswordFormLinks } from "~/constants/links";
@@ -24,7 +22,7 @@ interface ForgotPasswordResponse {
   email: string;
 }
 
-export default function Register() {
+export default function ForgotPassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
 
@@ -56,7 +54,7 @@ export default function Register() {
         },
       }}
     >
-      <BaseAuthenticationInput
+      <BaseAuthenticationTextInput
         type="email"
         label="Email Address"
         name="email"

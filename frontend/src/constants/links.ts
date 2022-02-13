@@ -25,6 +25,13 @@ export const loginFormLinks: ILink[] = [
   },
 ];
 
+export const verifyLoginFormLinks: ILink[] = [
+  {
+    text: "Go Back",
+    path: "/login",
+  },
+];
+
 export const registerFormLinks: ILink[] = [
   {
     text: "Have an Account?",
