@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
 
+import ErrorBoundary from "./ErrorBoundary";
 import { theme } from "~/constants/theme";
 import Navigation from "./Navigation";
 
@@ -13,10 +14,12 @@ const client = new ApolloClient({
 
 export default function App() {
   return (
-    <ApolloProvider client={client}>
-      <ChakraProvider theme={theme}>
-        <Navigation />
-      </ChakraProvider>
-    </ApolloProvider>
+    <ChakraProvider theme={theme}>
+      <ErrorBoundary>
+        <ApolloProvider client={client}>
+          <Navigation />
+        </ApolloProvider>
+      </ErrorBoundary>
+    </ChakraProvider>
   );
 }
