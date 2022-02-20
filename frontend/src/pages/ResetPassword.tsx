@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { gql } from "@apollo/client";
-import { Text, Link as ChakraLink } from "@chakra-ui/react";
 
 import BaseAuthentication, {
   BaseAuthenticationTextInput,
@@ -9,7 +7,7 @@ import BaseAuthentication, {
 import { INPUT_SETTINGS } from "~/constants/inputs";
 
 const RESET_PASSWORD_MUTATION = gql`
-  mutation ResetPasswordMutation(code: String!, $password: String!) {
+  mutation ResetPasswordMutation($code: String!, $password: String!) {
     resetPassword(code: $code, password: $password) {
       success
     }
