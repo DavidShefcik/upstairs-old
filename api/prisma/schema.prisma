@@ -16,15 +16,15 @@ model Names {
   name String
 }
 
-model Users {
+model User {
   id String @id @default(uuid())
 
   firstName String
   lastName  String
   email     String @unique
 
-  hashed_password    String
-  two_factor_enabled Boolean @default(false)
+  hashedPassword   String
+  twoFactorEnabled Boolean @default(false)
 }
 
 model RevokedJWT {

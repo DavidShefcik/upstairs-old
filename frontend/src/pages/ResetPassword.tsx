@@ -9,8 +9,8 @@ import BaseAuthentication, {
 import { INPUT_SETTINGS } from "~/constants/inputs";
 
 const RESET_PASSWORD_MUTATION = gql`
-  mutation ResetPasswordMutation($password: String!) {
-    resetPassword(password: $password) {
+  mutation ResetPasswordMutation(code: String!, $password: String!) {
+    resetPassword(code: $code, password: $password) {
       success
     }
   }

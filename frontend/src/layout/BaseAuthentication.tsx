@@ -64,6 +64,7 @@ interface BaseAuthenticationProps<T, R> {
   setIsSubmitting: Dispatch<SetStateAction<boolean>>;
   onSuccess?(data: R): void;
   links?: ILink[];
+  extraMutationVariables?: Record<string, string | number | boolean>;
 }
 
 const MOBILE_CONTAINER_WIDTH = "93%";
@@ -91,6 +92,7 @@ export default function BaseAuthentication<
   setIsSubmitting,
   onSuccess,
   links,
+  extraMutationVariables,
 }: BaseAuthenticationProps<T, R>) {
   const isMobile = useIsMobile();
 
@@ -131,7 +133,10 @@ export default function BaseAuthentication<
 
     try {
       await sendData({
-        variables: data,
+        variables: {
+          ...data,
+          ...extraMutationVariables,
+        },
         onCompleted: (data: R) => {
           setIsSubmitting(false);
 

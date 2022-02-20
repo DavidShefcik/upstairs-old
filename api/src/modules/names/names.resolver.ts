@@ -1,10 +1,12 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 
+import { Public } from '~/decorators/Public';
 import { Name } from '~/graphql';
 import { NamesService } from './names.service';
 
 @Resolver('Name')
+@Public()
 export class NamesResolver {
   constructor(private readonly namesService: NamesService) {}
 
