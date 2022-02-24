@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { gql } from "@apollo/client";
+import { ApolloError, gql } from "@apollo/client";
 
 import BaseAuthentication, {
   BaseAuthenticationTextInput,
 } from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { loginFormLinks } from "~/constants/links";
+import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 
 const LOGIN_MUTATION = gql`
   mutation LoginMutation($email: String!, $password: String!) {
     login(email: $email, password: $password) {
-      token
+      success
       needToVerify
     }
   }
@@ -21,7 +22,10 @@ interface LoginFields {
   password: string;
 }
 interface LoginResponse {
-  token: string;
+  login: {
+    success: boolean;
+    needToVerify?: boolean;
+  };
 }
 
 export default function Login() {
@@ -33,9 +37,36 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
 
   const onSuccess = (data: LoginResponse) => {
-    const { token } = data;
+    const { success, needToVerify } = data.login;
 
-    console.log({ token });
+    console.log({ success, needToVerify });
+  };
+
+  const onError = (error: ApolloError) => {
+    const { networkError, graphQLErrors } = error;
+
+    if (networkError) {
+      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+    } else {
+      graphQLErrors.forEach(({ message }) => {
+        switch (message) {
+          case ErrorMessages.USER_NOT_FOUND:
+          case ErrorMessages.INVALID_EMAIL:
+            setEmailError(humanReadableErrorMessages[message]);
+            break;
+          case ErrorMessages.INCORRECT_PASSWORD:
+            setPasswordError(humanReadableErrorMessages[message]);
+            break;
+          default:
+            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+        }
+      });
+    }
+  };
+
+  const setAllErrors = (errorMessage: string) => {
+    setEmailError(errorMessage);
+    setPasswordError(errorMessage);
   };
 
   return (
@@ -62,6 +93,7 @@ export default function Login() {
           isRequired: true,
         },
       }}
+      onError={onError}
     >
       <BaseAuthenticationTextInput
         type="email"

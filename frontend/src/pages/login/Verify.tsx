@@ -52,6 +52,7 @@ export default function VerifyLogin() {
           isRequired: true,
         },
       }}
+      onError={(error) => console.log("error")}
     >
       <BaseAuthenticationPinInput
         label="Authenticator Code"

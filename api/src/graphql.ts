@@ -8,21 +8,23 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface IMutation {
-    login(email: string, password: string): TokenResponse | Promise<TokenResponse>;
-    verifyLogin(email: string, password: string, code: string): TokenResponse | Promise<TokenResponse>;
-    register(email: string, password: string, firstName: string, lastName: string): LoginResponse | Promise<LoginResponse>;
-    requestPasswordReset(email: string): RequestPasswordResetResponse | Promise<RequestPasswordResetResponse>;
-    resetPassword(code: string, password: string): ResetPasswordResponse | Promise<ResetPasswordResponse>;
+    login(email: string, password: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
+    verifyLogin(email: string, password: string, code: string): Nullable<TokenResponse> | Promise<Nullable<TokenResponse>>;
+    register(email: string, password: string, firstName: string, lastName: string): Nullable<TokenResponse> | Promise<Nullable<TokenResponse>>;
+    requestPasswordReset(email: string): Nullable<RequestPasswordResetResponse> | Promise<Nullable<RequestPasswordResetResponse>>;
+    resetPassword(code: string, password: string): Nullable<ResetPasswordResponse> | Promise<Nullable<ResetPasswordResponse>>;
     createName(name: string): Name | Promise<Name>;
 }
 
 export interface LoginResponse {
+    success: boolean;
     token?: Nullable<string>;
     needToVerify?: Nullable<boolean>;
 }
 
 export interface TokenResponse {
-    token?: Nullable<string>;
+    success: boolean;
+    token: string;
 }
 
 export interface RequestPasswordResetResponse {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { gql } from "@apollo/client";
+import { gql, ApolloError } from "@apollo/client";
 import { Text, Link as ChakraLink } from "@chakra-ui/react";
 
 import BaseAuthentication, {
@@ -8,6 +8,7 @@ import BaseAuthentication, {
 } from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { registerFormLinks } from "~/constants/links";
+import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 
 const REGISTER_MUTATION = gql`
   mutation RegisterMutation(
@@ -22,7 +23,7 @@ const REGISTER_MUTATION = gql`
       email: $email
       password: $password
     ) {
-      token
+      success
     }
   }
 `;
@@ -35,7 +36,9 @@ interface RegisterFields {
   confirmPassword: string;
 }
 interface RegisterResponse {
-  token: string;
+  register: {
+    success: boolean;
+  };
 }
 
 export default function Register() {
@@ -53,9 +56,51 @@ export default function Register() {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const onSuccess = (data: RegisterResponse) => {
-    const { token } = data;
+    const { success } = data.register;
 
-    console.log({ token });
+    console.log({ success });
+  };
+
+  const onError = (error: ApolloError) => {
+    const { networkError, graphQLErrors } = error;
+
+    if (networkError) {
+      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+    } else {
+      graphQLErrors.forEach(({ message }) => {
+        switch (message) {
+          case ErrorMessages.INVALID_EMAIL:
+          case ErrorMessages.EMAIL_ALREADY_IN_USE:
+            setEmailError(humanReadableErrorMessages[message]);
+            break;
+          default:
+            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+        }
+      });
+    }
+  };
+
+  const customValidation = (): boolean => {
+    if (password !== confirmPassword) {
+      setPasswordError(
+        humanReadableErrorMessages[ErrorMessages.PASSWORDS_DO_NOT_MATCH]
+      );
+      setConfirmPasswordError(
+        humanReadableErrorMessages[ErrorMessages.PASSWORDS_DO_NOT_MATCH]
+      );
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const setAllErrors = (errorMessage: string) => {
+    setEmailError(errorMessage);
+    setFirstNameError(errorMessage);
+    setLastNameError(errorMessage);
+    setPasswordError(errorMessage);
+    setConfirmPasswordError(errorMessage);
   };
 
   return (
@@ -100,6 +145,8 @@ export default function Register() {
           isRequired: true,
         },
       }}
+      onError={onError}
+      customValidation={customValidation}
     >
       <BaseAuthenticationTextInput
         type="text"

@@ -20,6 +20,7 @@ import { AuthModule } from './modules/auth';
       definitions: {
         path: join(cwd(), 'src/graphql.ts'),
       },
+      context: ({ req, res }) => ({ req, res }),
     }),
     ConfigModule.forRoot(),
     // Utils

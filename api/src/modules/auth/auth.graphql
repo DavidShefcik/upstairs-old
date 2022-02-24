@@ -1,22 +1,24 @@
 type Mutation {
-  login(email: String!, password: String!): TokenResponse!
-  verifyLogin(email: String!, password: String!, code: String!): TokenResponse!
+  login(email: String!, password: String!): LoginResponse
+  verifyLogin(email: String!, password: String!, code: String!): TokenResponse
   register(
     email: String!
     password: String!
     firstName: String!
     lastName: String!
-  ): LoginResponse!
-  requestPasswordReset(email: String!): RequestPasswordResetResponse!
-  resetPassword(code: String!, password: String!): ResetPasswordResponse!
+  ): TokenResponse
+  requestPasswordReset(email: String!): RequestPasswordResetResponse
+  resetPassword(code: String!, password: String!): ResetPasswordResponse
 }
 
 type LoginResponse {
+  success: Boolean!
   token: String
   needToVerify: Boolean
 }
 type TokenResponse {
-  token: String
+  success: Boolean!
+  token: String!
 }
 type RequestPasswordResetResponse {
   email: String!

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 
 import {
   LoginResponse,
@@ -51,7 +51,10 @@ export class AuthService {
    * @returns `LoginResponse` containing a token or if
    * the login requires 2fa authorization
    */
-  async login({ email, password }: ILoginArgs): Promise<LoginResponse> {
+  async login({
+    email,
+    password,
+  }: ILoginArgs): Promise<Omit<LoginResponse, 'success'>> {
     const user = await this.prismaService.user.findUnique({
       where: {
         email,

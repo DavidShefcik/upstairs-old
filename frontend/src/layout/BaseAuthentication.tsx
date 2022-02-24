@@ -23,7 +23,7 @@ import {
   HStack,
   PinInputProps,
 } from "@chakra-ui/react";
-import { DocumentNode, useMutation } from "@apollo/client";
+import { ApolloError, DocumentNode, useMutation } from "@apollo/client";
 import _omit from "lodash.omit";
 
 import useIsMobile from "~/hooks/useIsMobile";
@@ -62,6 +62,8 @@ interface BaseAuthenticationProps<T, R> {
   setErrors: AuthenticationErrors<T>;
   isSubmitting: boolean;
   setIsSubmitting: Dispatch<SetStateAction<boolean>>;
+  onError(error: ApolloError): void;
+  customValidation?(): boolean;
   onSuccess?(data: R): void;
   links?: ILink[];
   extraMutationVariables?: Record<string, string | number | boolean>;
@@ -90,6 +92,8 @@ export default function BaseAuthentication<
   setErrors,
   isSubmitting,
   setIsSubmitting,
+  onError,
+  customValidation,
   onSuccess,
   links,
   extraMutationVariables,
@@ -102,6 +106,7 @@ export default function BaseAuthentication<
     event.preventDefault();
 
     setIsSubmitting(true);
+    setAllErrors("");
 
     // Validate inputs
     const errors: Partial<Record<keyof T, string>> = {};
@@ -131,24 +136,31 @@ export default function BaseAuthentication<
       return;
     }
 
-    try {
-      await sendData({
-        variables: {
-          ...data,
-          ...extraMutationVariables,
-        },
-        onCompleted: (data: R) => {
-          setIsSubmitting(false);
-
-          if (onSuccess) {
-            onSuccess(data);
-          }
-        },
-      });
-    } catch (error) {
-      setAllErrors("Something happened! Please try again.");
+    // Custom validation. We are already guaranteed that the required inputs are not blank
+    if (customValidation && !customValidation()) {
       setIsSubmitting(false);
+
+      return;
     }
+
+    await sendData({
+      variables: {
+        ...data,
+        ...extraMutationVariables,
+      },
+      onCompleted: (data: R) => {
+        setIsSubmitting(false);
+
+        if (onSuccess) {
+          onSuccess(data);
+        }
+      },
+      onError: (error) => {
+        setIsSubmitting(false);
+
+        onError(error);
+      },
+    });
   };
 
   const setAllErrors = (errorMessage: string) => {
@@ -162,10 +174,10 @@ export default function BaseAuthentication<
     // Set error messages
     if (Object.keys(errors).length > 0) {
       for (const key in errors) {
-        const errorMessage = errors[key];
+        const errMessage = errors[key];
 
-        if (errorMessage) {
-          setErrors[key](errorMessage);
+        if (errMessage !== undefined) {
+          setErrors[key](errMessage);
         }
       }
     }

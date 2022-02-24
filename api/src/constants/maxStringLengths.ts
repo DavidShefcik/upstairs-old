@@ -1,0 +1,3 @@
+export const MAXIMUM_EMAIL_LENGTH = 128;
+export const MAXIMUM_NAME_LENGTH = 16;
+export const MAXIMUM_PASSWORD_LENGTH = 1024;

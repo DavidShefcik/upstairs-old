@@ -4,6 +4,27 @@ import { ErrorMessage } from '~/constants/errorMessages';
 
 /**
  * ===============
+ * Data validation
+ * ===============
+ */
+export class InvalidEmail extends HttpException {
+  constructor() {
+    super(ErrorMessage.INVALID_EMAIL, HttpStatus.NOT_FOUND);
+  }
+}
+export class InvalidName extends HttpException {
+  constructor() {
+    super(ErrorMessage.INVALID_NAME, HttpStatus.NOT_FOUND);
+  }
+}
+export class InvalidPassword extends HttpException {
+  constructor() {
+    super(ErrorMessage.INVALID_PASSWORD, HttpStatus.NOT_FOUND);
+  }
+}
+
+/**
+ * ===============
  * Login
  * ===============
  */

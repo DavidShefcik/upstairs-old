@@ -53,6 +53,7 @@ export default function ForgotPassword() {
           isRequired: true,
         },
       }}
+      onError={(error) => console.log("error")}
     >
       <BaseAuthenticationTextInput
         type="email"

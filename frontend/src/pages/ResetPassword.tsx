@@ -59,6 +59,7 @@ export default function ResetPassword() {
           isRequired: true,
         },
       }}
+      onError={(error) => console.log("error")}
     >
       <BaseAuthenticationTextInput
         type="password"
