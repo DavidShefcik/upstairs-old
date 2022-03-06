@@ -26,7 +26,7 @@ import {
 import { ApolloError, DocumentNode, useMutation } from "@apollo/client";
 import _omit from "lodash.omit";
 
-import useIsMobile from "~/hooks/useIsMobile";
+import useDeviceSize from "~/hooks/useDeviceSize";
 import { ILink } from "~/constants/links";
 import { isValidString } from "~/utils/strings";
 
@@ -98,7 +98,7 @@ export default function BaseAuthentication<
   links,
   extraMutationVariables,
 }: BaseAuthenticationProps<T, R>) {
-  const isMobile = useIsMobile();
+  const { isMobile } = useDeviceSize();
 
   const [sendData, { loading, error }] = useMutation(mutation);
 

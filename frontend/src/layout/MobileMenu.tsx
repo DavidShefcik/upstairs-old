@@ -12,11 +12,11 @@ import {
 
 import { useMobileMenuContext } from "~/context/ui/MobileMenu";
 import { unauthenticatedNavLinks } from "~/constants/links";
-import useIsMobile from "~/hooks/useIsMobile";
+import useDeviceSize from "~/hooks/useDeviceSize";
 
 export default function MobileMenu() {
   const { isOpen, setIsOpen } = useMobileMenuContext();
-  const isMobile = useIsMobile();
+  const { isMobile } = useDeviceSize();
 
   useEffect(() => {
     if (isOpen && !isMobile) {

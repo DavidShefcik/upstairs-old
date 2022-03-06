@@ -3,8 +3,9 @@ import { Spinner, Text, Button } from "@chakra-ui/react";
 
 import CreateName from "~/components/names/CreateName";
 import Name from "~/components/names/Name";
+import PageWidth from "~/layout/PageWidth";
 import { useSessionContext } from "~/context/Session";
-import useIsMobile from "~/hooks/useIsMobile";
+import useDeviceSize from "~/hooks/useDeviceSize";
 
 interface NamesQueryResult {
   allNames: Name[];
@@ -22,7 +23,7 @@ const GET_NAMES_QUERY = gql`
 export default function HomePage() {
   const { data, loading, error, refetch } =
     useQuery<NamesQueryResult>(GET_NAMES_QUERY);
-  const isMobile = useIsMobile();
+  const { isMobile } = useDeviceSize();
   const { isLoggedIn } = useSessionContext();
 
   const handleRefetch = async () => {
@@ -33,7 +34,7 @@ export default function HomePage() {
   if (error) return <Text>Error!</Text>;
 
   return (
-    <>
+    <PageWidth>
       <p>Is Mobile: {isMobile.toString()}</p>
       <CreateName />
       <Button colorScheme="brand" onClick={handleRefetch}>
@@ -43,6 +44,6 @@ export default function HomePage() {
         <Name key={name.id} name={name.name} />
       ))}
       {isLoggedIn ? <p>Logged in</p> : <p>Not logged in</p>}
-    </>
+    </PageWidth>
   );
 }

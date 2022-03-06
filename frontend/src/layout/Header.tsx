@@ -1,10 +1,17 @@
 import { Link } from "react-router-dom";
-import { Flex, Link as ChakraLink, HStack, CSSObject } from "@chakra-ui/react";
+import {
+  Flex,
+  Link as ChakraLink,
+  HStack,
+  CSSObject,
+  Box,
+} from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
 import { unauthenticatedNavLinks } from "~/constants/links";
-import useIsMobile from "~/hooks/useIsMobile";
+import useDeviceSize from "~/hooks/useDeviceSize";
 import { useMobileMenuContext } from "~/context/ui/MobileMenu";
+import PageWidth from "./PageWidth";
 
 export const HEADER_HEIGHT = "60px";
 
@@ -18,7 +25,7 @@ const LINK_ACTION_STYLE: CSSObject = {
 function RightLinks() {
   // TODO: Authenticated links
   return (
-    <HStack spacing="5" marginRight="20">
+    <HStack spacing="5">
       {unauthenticatedNavLinks.map(({ text, path }) => (
         <ChakraLink
           key={path}
@@ -54,7 +61,7 @@ function HamburgerMenu() {
       onClick={handleIconClick}
       cursor="pointer"
       title="Menu"
-      paddingX="5"
+      paddingLeft="4"
     >
       <HamburgerIcon
         w={HAMBURGER_ICON_SIZE}
@@ -66,13 +73,10 @@ function HamburgerMenu() {
 }
 
 export default function Header() {
-  const isMobile = useIsMobile();
+  const { isMobile } = useDeviceSize();
 
   return (
-    <Flex
-      flexDirection="row"
-      justifyContent="space-between"
-      alignItems="center"
+    <Box
       backgroundColor="brand.100"
       height={HEADER_HEIGHT}
       position="sticky"
@@ -80,21 +84,30 @@ export default function Header() {
       top={0}
       zIndex={100}
     >
-      <ChakraLink
-        as={Link}
-        to="/"
-        title="Upstairs"
-        marginX={isMobile ? "5" : "20"}
-        fontSize="2xl"
-        fontWeight="bold"
-        fontStyle="italic"
-        color="gray.100"
-        _hover={LINK_ACTION_STYLE}
-        _focus={LINK_ACTION_STYLE}
-      >
-        Upstairs
-      </ChakraLink>
-      {isMobile ? <HamburgerMenu /> : <RightLinks />}
-    </Flex>
+      <PageWidth>
+        <Flex
+          width="100%"
+          height="100%"
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <ChakraLink
+            as={Link}
+            to="/"
+            title="Upstairs"
+            fontSize="2xl"
+            fontWeight="bold"
+            fontStyle="italic"
+            color="gray.100"
+            _hover={LINK_ACTION_STYLE}
+            _focus={LINK_ACTION_STYLE}
+          >
+            Upstairs
+          </ChakraLink>
+          {isMobile ? <HamburgerMenu /> : <RightLinks />}
+        </Flex>
+      </PageWidth>
+    </Box>
   );
 }
