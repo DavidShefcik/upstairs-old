@@ -9,8 +9,8 @@
 /* eslint-disable */
 export interface IMutation {
     login(email: string, password: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
-    verifyLogin(email: string, password: string, code: string): Nullable<TokenResponse> | Promise<Nullable<TokenResponse>>;
-    register(email: string, password: string, firstName: string, lastName: string): Nullable<TokenResponse> | Promise<Nullable<TokenResponse>>;
+    verifyLogin(email: string, password: string, code: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
+    register(email: string, password: string, firstName: string, lastName: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
     requestPasswordReset(email: string): Nullable<RequestPasswordResetResponse> | Promise<Nullable<RequestPasswordResetResponse>>;
     resetPassword(code: string, password: string): Nullable<ResetPasswordResponse> | Promise<Nullable<ResetPasswordResponse>>;
     createName(name: string): Name | Promise<Name>;
@@ -18,13 +18,9 @@ export interface IMutation {
 
 export interface LoginResponse {
     success: boolean;
-    token?: Nullable<string>;
     needToVerify?: Nullable<boolean>;
-}
-
-export interface TokenResponse {
-    success: boolean;
-    token: string;
+    token?: Nullable<string>;
+    user?: Nullable<User>;
 }
 
 export interface RequestPasswordResetResponse {
@@ -35,9 +31,18 @@ export interface ResetPasswordResponse {
     success: boolean;
 }
 
+export interface User {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    fullName: string;
+}
+
 export interface IQuery {
     allNames(): Name[] | Promise<Name[]>;
     name(name: string): Nullable<Name> | Promise<Nullable<Name>>;
+    currentUser(): User | Promise<User>;
 }
 
 export interface Name {

@@ -4,12 +4,14 @@ import { ChakraProvider } from "@chakra-ui/react";
 import ErrorBoundary from "./ErrorBoundary";
 import { theme } from "~/constants/theme";
 import Navigation from "./Navigation";
+import GlobalProvider from "~/context/GlobalProvider";
 
 import "~/assets/global.css";
 
 const client = new ApolloClient({
   uri: `${__API_URL__}/graphql`,
   cache: new InMemoryCache(),
+  credentials: "same-origin",
 });
 
 export default function App() {
@@ -17,7 +19,9 @@ export default function App() {
     <ChakraProvider theme={theme}>
       <ErrorBoundary>
         <ApolloProvider client={client}>
-          <Navigation />
+          <GlobalProvider>
+            <Navigation />
+          </GlobalProvider>
         </ApolloProvider>
       </ErrorBoundary>
     </ChakraProvider>

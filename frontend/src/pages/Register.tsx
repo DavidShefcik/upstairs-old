@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { gql, ApolloError } from "@apollo/client";
 import { Text, Link as ChakraLink } from "@chakra-ui/react";
 
@@ -9,8 +9,11 @@ import BaseAuthentication, {
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { registerFormLinks } from "~/constants/links";
 import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
+import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
+import { useSessionContext } from "~/context/Session";
 
 const REGISTER_MUTATION = gql`
+  ${CURRENT_USER_FRAGMENT}
   mutation RegisterMutation(
     $firstName: String!
     $lastName: String!
@@ -24,6 +27,9 @@ const REGISTER_MUTATION = gql`
       password: $password
     ) {
       success
+      user {
+        ...CurrentUser
+      }
     }
   }
 `;
@@ -38,10 +44,14 @@ interface RegisterFields {
 interface RegisterResponse {
   register: {
     success: boolean;
+    user: User;
   };
 }
 
 export default function Register() {
+  const { login } = useSessionContext();
+  const navigate = useNavigate();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -56,9 +66,12 @@ export default function Register() {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const onSuccess = (data: RegisterResponse) => {
-    const { success } = data.register;
+    const { success, user } = data.register;
 
-    console.log({ success });
+    if (success) {
+      login(user);
+      navigate("/");
+    }
   };
 
   const onError = (error: ApolloError) => {

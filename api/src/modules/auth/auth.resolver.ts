@@ -12,7 +12,6 @@ import { DateTime } from 'luxon';
 import { Public } from '~/decorators/Public';
 import {
   LoginResponse,
-  TokenResponse,
   RequestPasswordResetResponse,
   ResetPasswordResponse,
 } from '~/graphql';
@@ -103,7 +102,7 @@ export class AuthResolver {
     @Args('firstName') firstName: string,
     @Args('lastName') lastName: string,
     @Context() context: GraphQLExecutionContext,
-  ): Promise<TokenResponse> {
+  ): Promise<LoginResponse> {
     // Validate data
     const emailIsValid = this.emailSchema.safeParse(email).success;
     const passwordIsValid = this.passwordSchema.safeParse(password).success;

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ApolloError, gql } from "@apollo/client";
 
 import BaseAuthentication, {
@@ -7,12 +8,18 @@ import BaseAuthentication, {
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { loginFormLinks } from "~/constants/links";
 import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
+import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
+import { useSessionContext } from "~/context/Session";
 
 const LOGIN_MUTATION = gql`
+  ${CURRENT_USER_FRAGMENT}
   mutation LoginMutation($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       success
       needToVerify
+      user {
+        ...CurrentUser
+      }
     }
   }
 `;
@@ -25,10 +32,14 @@ interface LoginResponse {
   login: {
     success: boolean;
     needToVerify?: boolean;
+    user?: User;
   };
 }
 
 export default function Login() {
+  const { login } = useSessionContext();
+  const navigate = useNavigate();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,9 +48,13 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
 
   const onSuccess = (data: LoginResponse) => {
-    const { success, needToVerify } = data.login;
+    const { success, needToVerify, user } = data.login;
 
-    console.log({ success, needToVerify });
+    // TODO: 2fa verification
+    if (success && user) {
+      login(user);
+      navigate("/");
+    }
   };
 
   const onError = (error: ApolloError) => {

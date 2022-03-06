@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import _omit from 'lodash.omit';
+
+import { JwtService } from '~/modules/utils/jwt';
 
 import {
   LoginResponse,
-  TokenResponse,
   RequestPasswordResetResponse,
   ResetPasswordResponse,
+  User as GraphQLUser,
 } from '~/graphql';
 import { PrismaService } from '~/modules/utils/prisma';
 import {
@@ -27,6 +29,7 @@ interface IRegisterArgs {
 }
 
 const HASH_SALT_ROUNDS = 10;
+const SENSITIVE_USER_VALUES = ['hashedPassword', 'twoFactorEnabled'];
 
 @Injectable()
 export class AuthService {
@@ -39,7 +42,6 @@ export class AuthService {
    * Function that attempts to authentication a user with the
    * given email and password.
    *
-   * @args Object - See below
    * @args email - The email of the user
    * @args password - The password of the user
    *
@@ -51,19 +53,10 @@ export class AuthService {
    * @returns `LoginResponse` containing a token or if
    * the login requires 2fa authorization
    */
-  async login({
-    email,
-    password,
-  }: ILoginArgs): Promise<Omit<LoginResponse, 'success'>> {
+  async login({ email, password }: ILoginArgs): Promise<LoginResponse> {
     const user = await this.prismaService.user.findUnique({
       where: {
         email,
-      },
-      select: {
-        id: true,
-        email: true,
-        hashedPassword: true,
-        twoFactorEnabled: true,
       },
     });
 
@@ -82,18 +75,26 @@ export class AuthService {
     // Check if user requires 2fa verification
     if (user.twoFactorEnabled) {
       return {
+        success: false,
         needToVerify: true,
       };
     }
 
-    // TODO: Generate JWT token
-    const token = this.jwtService.sign({
-      sub: user.id,
-      email: user.email,
+    const token = this.jwtService.generateJWT({
+      email,
+      userId: user.id,
     });
 
+    const userToReturn = _omit(user, SENSITIVE_USER_VALUES) as GraphQLUser;
+
     return {
+      success: true,
+      needToVerify: false,
       token,
+      user: {
+        ...userToReturn,
+        fullName: `${user.firstName} ${user.lastName}`,
+      },
     };
   }
 
@@ -101,7 +102,6 @@ export class AuthService {
    * Function to try and register a user with the given email,
    * first name, last name, and password.
    *
-   * @args Object - See below
    * @args email - The email to register with
    * @args firstName - The first name of the user
    * @args lastName - The last name of the user
@@ -113,7 +113,12 @@ export class AuthService {
    * @returns `TokenResponse` containing the token of the
    * newly created user to log them in
    */
-  async register({ email, firstName, lastName, password }: IRegisterArgs) {
+  async register({
+    email,
+    firstName,
+    lastName,
+    password,
+  }: IRegisterArgs): Promise<LoginResponse> {
     // Check if user already exists
     const existingUser = await this.prismaService.user.findUnique({
       where: {
@@ -136,21 +141,23 @@ export class AuthService {
         lastName,
         hashedPassword,
       },
-      select: {
-        id: true,
-        email: true,
-      },
     });
 
     // Generate token
-    // TODO: Generate JWT token
-    const token = this.jwtService.sign({
-      sub: newUser.id,
+    const token = this.jwtService.generateJWT({
       email: newUser.email,
+      userId: newUser.id,
     });
 
+    const userToReturn = _omit(newUser, SENSITIVE_USER_VALUES) as GraphQLUser;
+
     return {
+      success: true,
       token,
+      user: {
+        ...userToReturn,
+        fullName: `${userToReturn.firstName} ${userToReturn.lastName}`,
+      },
     };
   }
 }

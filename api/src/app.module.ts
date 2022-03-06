@@ -5,15 +5,13 @@ import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { cwd } from 'process';
 
-import { JwtAuthModule, JwtAuthGuard } from '~/modules/utils/jwtAuth';
+import { JwtModule, JwtAuthGuard } from '~/modules/utils/jwt';
 import { NamesModule } from './modules/names';
 import { AuthModule } from './modules/auth';
+import { UsersModule } from './modules/users';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     // Packages
     GraphQLModule.forRoot({
       typePaths: ['./**/*.graphql'],
@@ -21,13 +19,20 @@ import { AuthModule } from './modules/auth';
         path: join(cwd(), 'src/graphql.ts'),
       },
       context: ({ req, res }) => ({ req, res }),
+      cors: {
+        origin: process.env.FRONTEND_URL,
+        credentials: true,
+      },
     }),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     // Utils
-    JwtAuthModule,
+    JwtModule,
     // Modules
     NamesModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [

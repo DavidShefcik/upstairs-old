@@ -3,6 +3,7 @@ import { Spinner, Text, Button } from "@chakra-ui/react";
 
 import CreateName from "~/components/names/CreateName";
 import Name from "~/components/names/Name";
+import { useSessionContext } from "~/context/Session";
 import useIsMobile from "~/hooks/useIsMobile";
 
 interface NamesQueryResult {
@@ -22,6 +23,7 @@ export default function HomePage() {
   const { data, loading, error, refetch } =
     useQuery<NamesQueryResult>(GET_NAMES_QUERY);
   const isMobile = useIsMobile();
+  const { isLoggedIn } = useSessionContext();
 
   const handleRefetch = async () => {
     await refetch();
@@ -40,6 +42,7 @@ export default function HomePage() {
       {data?.allNames.map((name: any) => (
         <Name key={name.id} name={name.name} />
       ))}
+      {isLoggedIn ? <p>Logged in</p> : <p>Not logged in</p>}
     </>
   );
 }
