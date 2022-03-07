@@ -8,7 +8,8 @@ type Mutation {
     lastName: String!
   ): LoginResponse
   requestPasswordReset(email: String!): RequestPasswordResetResponse
-  resetPassword(code: String!, password: String!): ResetPasswordResponse
+  resetPassword(code: String!, password: String!): SuccessResponse
+  logout: SuccessResponse
 }
 
 type LoginResponse {
@@ -20,7 +21,7 @@ type LoginResponse {
 type RequestPasswordResetResponse {
   email: String!
 }
-type ResetPasswordResponse {
+type SuccessResponse {
   success: Boolean!
 }
 type User {

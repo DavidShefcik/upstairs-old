@@ -10,18 +10,22 @@ import { CookieOptions } from 'express';
 import { DateTime } from 'luxon';
 
 import { Public } from '~/decorators/Public';
+import { RequireAuth } from '~/decorators/RequireAuth';
 import {
   LoginResponse,
   RequestPasswordResetResponse,
-  ResetPasswordResponse,
+  SuccessResponse,
 } from '~/graphql';
 import { AuthService } from './auth.service';
+import { JwtService } from '~/modules/utils/jwt';
+import { PrismaService } from '~/modules/utils/prisma';
+import { UnauthorizedError } from '~/exceptions/general';
+import { InvalidEmail, InvalidName, InvalidPassword } from '~/exceptions/auth';
 import {
   MAXIMUM_EMAIL_LENGTH,
   MAXIMUM_NAME_LENGTH,
   MAXIMUM_PASSWORD_LENGTH,
 } from '~/constants/maxStringLengths';
-import { InvalidEmail, InvalidName, InvalidPassword } from '~/exceptions/auth';
 import { isValidString } from '~/utils/strings';
 
 const COOKIE_SETTINGS: CookieOptions = {
@@ -37,7 +41,11 @@ const COOKIE_SETTINGS: CookieOptions = {
 @Resolver()
 @Public()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   private readonly emailSchema = z
     .string()
@@ -146,5 +154,28 @@ export class AuthResolver {
   // async resetPassword(
   //   @Args('code') code: string,
   //   @Args('password') password: string,
-  // ): Promise<ResetPasswordResponse> {}
+  // ): Promise<SuccessResponse> {}
+
+  @Mutation()
+  @RequireAuth()
+  async logout(
+    @Context() context: GraphQLExecutionContext,
+  ): Promise<SuccessResponse> {
+    // @ts-ignore
+    const token = this.jwtService.extractTokenFromRequest(context.req);
+
+    if (!token) {
+      throw new UnauthorizedError();
+    }
+
+    const tokenRevoked = await this.jwtService.revokeJWT(token);
+
+    // Remove JWT cookie from frontend client
+    // @ts-ignore
+    context.res.clearCookie('token');
+
+    return {
+      success: tokenRevoked,
+    };
+  }
 }

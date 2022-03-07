@@ -14,7 +14,7 @@ import { JwtService } from './jwt.service';
     PassportModule,
     NestJwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '60m' },
+      signOptions: { expiresIn: '30d' },
     }),
   ],
   providers: [JwtStrategy, JwtService],

@@ -48,13 +48,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ): Promise<JwtValidateResult> {
     const userId = payload.sub;
 
-    let token = '';
-
-    if (request.cookies && request.cookies.token) {
-      token = request.cookies.token;
-    } else if (request.headers.authorization) {
-      token = request.headers.authorization.replace('Bearer', '').trim();
-    }
+    const token = this.jwtService.extractTokenFromRequest(request);
 
     if (!token) {
       throw new UnauthorizedError();

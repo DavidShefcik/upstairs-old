@@ -12,7 +12,8 @@ export interface IMutation {
     verifyLogin(email: string, password: string, code: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
     register(email: string, password: string, firstName: string, lastName: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
     requestPasswordReset(email: string): Nullable<RequestPasswordResetResponse> | Promise<Nullable<RequestPasswordResetResponse>>;
-    resetPassword(code: string, password: string): Nullable<ResetPasswordResponse> | Promise<Nullable<ResetPasswordResponse>>;
+    resetPassword(code: string, password: string): Nullable<SuccessResponse> | Promise<Nullable<SuccessResponse>>;
+    logout(): Nullable<SuccessResponse> | Promise<Nullable<SuccessResponse>>;
     createName(name: string): Name | Promise<Name>;
 }
 
@@ -27,7 +28,7 @@ export interface RequestPasswordResetResponse {
     email: string;
 }
 
-export interface ResetPasswordResponse {
+export interface SuccessResponse {
     success: boolean;
 }
 

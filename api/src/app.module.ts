@@ -10,6 +10,8 @@ import { NamesModule } from './modules/names';
 import { AuthModule } from './modules/auth';
 import { UsersModule } from './modules/users';
 
+// TODO: Cron job to remove revoked JWT older than 30 days. Set token expiration to 30 days
+
 @Module({
   imports: [
     // Packages

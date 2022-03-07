@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import { DateTime } from 'luxon';
 
 import { PrismaService } from '~/modules/utils/prisma';
@@ -76,10 +77,22 @@ export class JwtService {
    * @returns boolean if the token was successfully revoked or not
    */
   async revokeJWT(token: string): Promise<boolean> {
+    const { exp, iat } = await this.decodeJWT(token);
+
+    /**
+     * For some reason, to get the correct expiration date
+     * we need to subtract the issued at time from the
+     * expiration time. We round each to the nearest whole number
+     */
+    const expiresAtSeconds = Math.floor(iat) - Math.floor(exp);
+
+    const tokenExpiresAt = new Date(expiresAtSeconds * 1000);
+
     try {
       await this.prismaService.revokedJWT.create({
         data: {
           token,
+          tokenExpiresAt,
         },
       });
 
@@ -140,5 +153,30 @@ export class JwtService {
     }
 
     return true;
+  }
+
+  /**
+   * Extract a token from a given request by trying to grab
+   * it from either the cookies or the authorization header.
+   * Strip the bearer keyword from the authorization header.
+   *
+   * @param request - The request to grab the token from
+   * @returns a string containing the token, `null` if no token
+   * was found
+   */
+  extractTokenFromRequest(request: Request): string | null {
+    let token = '';
+
+    if (request.cookies && request.cookies.token) {
+      token = request.cookies.token;
+    } else if (request.headers.authorization) {
+      token = request.headers.authorization.replace('Bearer', '').trim();
+    }
+
+    if (token) {
+      return token;
+    } else {
+      return null;
+    }
   }
 }

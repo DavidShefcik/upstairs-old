@@ -3,6 +3,12 @@ export interface ILink {
   path: string;
 }
 
+export const authenticatedNavLinks: ILink[] = [
+  {
+    text: "Logout",
+    path: "/logout",
+  },
+];
 export const unauthenticatedNavLinks: ILink[] = [
   {
     text: "Login",

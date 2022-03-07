@@ -1,10 +1,11 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Flex, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 import SessionContext from "./Session";
 import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
+import FullPageLoading from "~/layout/FullPageLoading";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -17,6 +18,11 @@ interface StatusProps {
 interface GetCurrentUserResponse {
   currentUser: User;
 }
+interface LogoutResponse {
+  logout: {
+    success: boolean;
+  };
+}
 
 const GET_USER_QUERY = gql`
   ${CURRENT_USER_FRAGMENT}
@@ -26,6 +32,14 @@ const GET_USER_QUERY = gql`
     }
   }
 `;
+const LOGOUT_MUTATION = gql`
+  mutation LogoutMutation {
+    logout {
+      success
+    }
+  }
+`;
+
 const ICON_SIZE = 16;
 
 function Status({ text, children }: StatusProps) {
@@ -51,13 +65,6 @@ function Status({ text, children }: StatusProps) {
     </Flex>
   );
 }
-function Loading() {
-  return (
-    <Status text="Loading...">
-      <Spinner color="gray.100" size="xl" />
-    </Status>
-  );
-}
 function Error() {
   return (
     <Status text="Error!">
@@ -70,13 +77,17 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
   const [allLoading, setAllLoading] = useState(true);
   const [unrecoverableError, setUnrecoverableError] = useState(false);
 
+  const [userLoading, setUserLoading] = useState(true);
+
   // Session
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const [requestLogout, { loading: logoutLoading, error: logoutError }] =
+    useMutation(LOGOUT_MUTATION);
+
   // Check session
   const {
-    loading: getUserLoading,
     error: getUserError,
     data: getUserData,
     refetch: refetchUserData,
@@ -86,25 +97,31 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
       if (currentUser) {
         login(currentUser);
       } else if (!currentUser && (isLoggedIn || user)) {
-        logout();
+        clearSessionState();
       }
     },
-    onError: () => {
-      logout();
+    onError: async () => {
+      if (isLoggedIn || user) {
+        await clearSessionState();
+      }
     },
   });
 
   useEffect(() => {
     (async () => {
-      await refetchUserData().catch(() => {});
+      try {
+        await refetchUserData();
+      } catch {}
+
+      setUserLoading(false);
     })();
   }, []);
 
   useEffect(() => {
-    const newAllLoading = [getUserLoading].some((val) => val);
+    const newAllLoading = [userLoading].some((val) => val);
 
     setAllLoading(newAllLoading);
-  }, [getUserLoading, setAllLoading]);
+  }, [userLoading, setAllLoading]);
 
   // useEffect(() => {
   // Errors that prevent the site from loading should
@@ -118,11 +135,27 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     setIsLoggedIn(true);
   };
   const logout = async () => {
+    await requestLogout({
+      onCompleted: (data: LogoutResponse) => {
+        const { success } = data.logout;
+
+        if (success) {
+          clearSessionState();
+        } else {
+          // TODO: Banner at the top of site showing error
+        }
+      },
+      onError: () => {
+        // TODO: Banner at the top of site showing error
+      },
+    });
+  };
+  const clearSessionState = () => {
     setUser(null);
     setIsLoggedIn(false);
   };
 
-  if (allLoading) return <Loading />;
+  if (allLoading) return <FullPageLoading text="Loading..." />;
   if (unrecoverableError) return <Error />;
 
   return (

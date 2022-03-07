@@ -7,7 +7,7 @@ import { JwtService } from '~/modules/utils/jwt';
 import {
   LoginResponse,
   RequestPasswordResetResponse,
-  ResetPasswordResponse,
+  SuccessResponse,
   User as GraphQLUser,
 } from '~/graphql';
 import { PrismaService } from '~/modules/utils/prisma';

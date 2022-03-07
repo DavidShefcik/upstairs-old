@@ -8,10 +8,14 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
-import { unauthenticatedNavLinks } from "~/constants/links";
+import {
+  authenticatedNavLinks,
+  unauthenticatedNavLinks,
+} from "~/constants/links";
 import useDeviceSize from "~/hooks/useDeviceSize";
 import { useMobileMenuContext } from "~/context/ui/MobileMenu";
 import PageWidth from "./PageWidth";
+import { useSessionContext } from "~/context/Session";
 
 export const HEADER_HEIGHT = "60px";
 
@@ -23,25 +27,28 @@ const LINK_ACTION_STYLE: CSSObject = {
 };
 
 function RightLinks() {
-  // TODO: Authenticated links
+  const { isLoggedIn } = useSessionContext();
+
   return (
     <HStack spacing="5">
-      {unauthenticatedNavLinks.map(({ text, path }) => (
-        <ChakraLink
-          key={path}
-          as={Link}
-          to={path}
-          title={text}
-          fontSize="lg"
-          textColor="gray.200"
-          textDecoration="none"
-          fontWeight="bold"
-          _hover={LINK_ACTION_STYLE}
-          _focus={LINK_ACTION_STYLE}
-        >
-          {text}
-        </ChakraLink>
-      ))}
+      {(isLoggedIn ? authenticatedNavLinks : unauthenticatedNavLinks).map(
+        ({ text, path }) => (
+          <ChakraLink
+            key={path}
+            as={Link}
+            to={path}
+            title={text}
+            fontSize="lg"
+            textColor="gray.200"
+            textDecoration="none"
+            fontWeight="bold"
+            _hover={LINK_ACTION_STYLE}
+            _focus={LINK_ACTION_STYLE}
+          >
+            {text}
+          </ChakraLink>
+        )
+      )}
     </HStack>
   );
 }
