@@ -84,7 +84,7 @@ export class JwtService {
      * we need to subtract the issued at time from the
      * expiration time. We round each to the nearest whole number
      */
-    const expiresAtSeconds = Math.floor(iat) - Math.floor(exp);
+    const expiresAtSeconds = Math.floor(exp) - Math.floor(iat);
 
     const tokenExpiresAt = new Date(expiresAtSeconds * 1000);
 

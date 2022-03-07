@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Flex } from "@chakra-ui/react";
 
@@ -9,24 +9,13 @@ export default function LogoutPage() {
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useSessionContext();
 
-  const navigateTimeoutRef = useRef<number>();
-
   useEffect(() => {
     (async () => {
       if (isLoggedIn) {
         await logout();
-      }
-
-      navigateTimeoutRef.current = setTimeout(() => {
         navigate("/");
-      }, 500);
-    })();
-
-    return () => {
-      if (navigateTimeoutRef.current) {
-        clearTimeout(navigateTimeoutRef.current);
       }
-    };
+    })();
   }, []);
 
   return (
