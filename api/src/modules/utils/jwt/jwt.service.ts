@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { DateTime } from 'luxon';
@@ -6,8 +6,7 @@ import { DateTime } from 'luxon';
 import { PrismaService } from '~/modules/utils/prisma';
 import { UnauthorizedError } from '~/exceptions/general';
 import { UsersService } from '~/modules/users';
-
-const TOKEN_EXPIRATION_DAYS = 30;
+import { Cron } from '@nestjs/schedule';
 
 interface IGenerateJWTArgs {
   userId: string;
@@ -28,6 +27,8 @@ export class JwtService {
     private readonly usersService: UsersService,
   ) {}
 
+  private readonly logger = new Logger(JwtService.name);
+
   /**
    * Generate a new JWT using the given user ID and email
    *
@@ -38,23 +39,13 @@ export class JwtService {
   generateJWT({ userId, email }: IGenerateJWTArgs): string {
     const tokenIssuedAtEpochSeconds = DateTime.now().toSeconds();
 
-    const tokenExpiresAtEpochSeconds = Math.floor(
-      DateTime.now()
-        .plus({
-          days: TOKEN_EXPIRATION_DAYS,
-        })
-        .toSeconds(),
-    );
-
     const jwtPayload: IJWTPayload = {
       email,
       sub: userId,
       iat: tokenIssuedAtEpochSeconds,
     };
 
-    return this.jwtService.sign(jwtPayload, {
-      expiresIn: tokenExpiresAtEpochSeconds,
-    });
+    return this.jwtService.sign(jwtPayload);
   }
 
   /**
@@ -177,6 +168,32 @@ export class JwtService {
       return token;
     } else {
       return null;
+    }
+  }
+
+  /**
+   * Private cron job to delete revoked tokens from the
+   * revoked JWT table when the current time is passed their
+   * expiration date.
+   */
+  @Cron('* * * * *')
+  private async clearRevokedJWT() {
+    /**
+     * Get all revoked JWT where the expiration date
+     * is before or equal to now
+     */
+    const now = DateTime.now().toJSDate();
+
+    const { count } = await this.prismaService.revokedJWT.deleteMany({
+      where: {
+        tokenExpiresAt: {
+          lte: now,
+        },
+      },
+    });
+
+    if (count > 0) {
+      Logger.log(`Deleted ${count} revoked JWTs from the database`);
     }
   }
 }

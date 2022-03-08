@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
 import { cwd } from 'process';
 
@@ -9,8 +10,6 @@ import { JwtModule, JwtAuthGuard } from '~/modules/utils/jwt';
 import { NamesModule } from './modules/names';
 import { AuthModule } from './modules/auth';
 import { UsersModule } from './modules/users';
-
-// TODO: Cron job to remove revoked JWT older than 30 days. Set token expiration to 30 days
 
 @Module({
   imports: [
@@ -29,6 +28,7 @@ import { UsersModule } from './modules/users';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     // Utils
     JwtModule,
     // Modules
