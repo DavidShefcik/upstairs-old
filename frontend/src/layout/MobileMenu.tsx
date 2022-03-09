@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Drawer,
   DrawerOverlay,
@@ -26,12 +26,19 @@ export default function MobileMenu() {
   const { isLoggedIn } = useSessionContext();
   const { isMobile } = useDeviceSize();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (isOpen && !isMobile) {
       setIsOpen(false);
     }
   }, [isOpen, isMobile, setIsOpen]);
+
+  useEffect(() => {
+    if (isOpen && isMobile) {
+      setIsOpen(false);
+    }
+  }, [location]);
 
   const showLogoutModal = () => {
     NiceModal.show(LogoutModal, {
