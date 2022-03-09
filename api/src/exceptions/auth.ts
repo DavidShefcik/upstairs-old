@@ -1,4 +1,4 @@
-import { HttpException, HttpCode, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { ErrorMessage } from '~/constants/errorMessages';
 
