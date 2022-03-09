@@ -68,16 +68,9 @@ export class JwtService {
    * @returns boolean if the token was successfully revoked or not
    */
   async revokeJWT(token: string): Promise<boolean> {
-    const { exp, iat } = await this.decodeJWT(token);
+    const { exp } = await this.decodeJWT(token);
 
-    /**
-     * For some reason, to get the correct expiration date
-     * we need to subtract the issued at time from the
-     * expiration time. We round each to the nearest whole number
-     */
-    const expiresAtSeconds = Math.floor(exp) - Math.floor(iat);
-
-    const tokenExpiresAt = new Date(expiresAtSeconds * 1000);
+    const tokenExpiresAt = DateTime.fromSeconds(exp).toJSDate();
 
     try {
       await this.prismaService.revokedJWT.create({
