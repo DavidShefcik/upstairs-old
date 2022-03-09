@@ -4,14 +4,14 @@ export interface ISessionContext {
   user: User | null;
   isLoggedIn: boolean;
   login(user: User): void;
-  logout(): Promise<void>;
+  logout(): Promise<boolean>;
 }
 
 const SessionContext = createContext<ISessionContext>({
   user: null,
   isLoggedIn: false,
   login: () => {},
-  logout: async () => {},
+  logout: async () => false,
 });
 
 export function useSessionContext(): ISessionContext {

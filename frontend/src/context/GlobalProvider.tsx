@@ -135,19 +135,27 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     setIsLoggedIn(true);
   };
   const logout = async () => {
-    await requestLogout({
-      onCompleted: (data: LogoutResponse) => {
-        const { success } = data.logout;
+    return await new Promise<boolean>(async (resolve) => {
+      await requestLogout({
+        onCompleted: (data: LogoutResponse) => {
+          const { success } = data.logout;
 
-        if (success) {
-          clearSessionState();
-        } else {
+          if (success) {
+            clearSessionState();
+
+            resolve(true);
+          } else {
+            // TODO: Banner at the top of site showing error
+
+            resolve(false);
+          }
+        },
+        onError: () => {
           // TODO: Banner at the top of site showing error
-        }
-      },
-      onError: () => {
-        // TODO: Banner at the top of site showing error
-      },
+
+          resolve(false);
+        },
+      });
     });
   };
   const clearSessionState = () => {

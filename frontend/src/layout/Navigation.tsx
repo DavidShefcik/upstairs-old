@@ -8,7 +8,6 @@ import LoginVerifyPage from "~/pages/login/Verify";
 import RegisterPage from "~/pages/Register";
 import ForgotPasswordPage from "~/pages/ForgotPassword";
 import ResetPasswordPage from "~/pages/ResetPassword";
-import LogoutPage from "~/pages/Logout";
 import NotFound from "~/pages/NotFound";
 
 export default function Navigation() {
@@ -25,7 +24,6 @@ export default function Navigation() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           {/* TODO: Make logout an authenticated only page */}
-          <Route path="/logout" element={<LogoutPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

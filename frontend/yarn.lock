@@ -828,6 +828,11 @@
   resolved "https://registry.yarnpkg.com/@cush/relative/-/relative-1.0.0.tgz#8cd1769bf9bde3bb27dac356b1bc94af40f6cc16"
   integrity sha512-RpfLEtTlyIxeNPGKcokS+p3BZII/Q3bYxryFRglh5H3A3T8q9fsLYm72VYAMEOOIBLEa8o93kFLiBDUWKrwXZA==
 
+"@ebay/nice-modal-react@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@ebay/nice-modal-react/-/nice-modal-react-1.2.1.tgz#e4a6a2d0bf7f67127a37ea0273d76b143a4f8cb2"
+  integrity sha512-JQx9ZENaQAAlJsPaQOdBy2JQ47xLn7sJohZexPdixaEBruSCdNB8myznfa057Ptgsy0XVMdcJBIpMLqpA8x8FQ==
+
 "@emotion/babel-plugin@^11.3.0":
   version "11.7.2"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.7.2.tgz#fec75f38a6ab5b304b0601c74e2a5e77c95e5fa0"

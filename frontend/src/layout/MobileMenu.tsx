@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Drawer,
   DrawerOverlay,
@@ -8,7 +8,9 @@ import {
   DrawerCloseButton,
   Link as ChakraLink,
   VStack,
+  Text,
 } from "@chakra-ui/react";
+import NiceModal from "@ebay/nice-modal-react";
 
 import { useMobileMenuContext } from "~/context/ui/MobileMenu";
 import {
@@ -17,17 +19,25 @@ import {
 } from "~/constants/links";
 import useDeviceSize from "~/hooks/useDeviceSize";
 import { useSessionContext } from "~/context/Session";
+import LogoutModal from "./modals/LogoutModal";
 
 export default function MobileMenu() {
   const { isOpen, setIsOpen } = useMobileMenuContext();
   const { isLoggedIn } = useSessionContext();
   const { isMobile } = useDeviceSize();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen && !isMobile) {
       setIsOpen(false);
     }
   }, [isOpen, isMobile, setIsOpen]);
+
+  const showLogoutModal = () => {
+    NiceModal.show(LogoutModal, {
+      onSuccess: () => navigate("/"),
+    });
+  };
 
   return (
     <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
@@ -48,6 +58,16 @@ export default function MobileMenu() {
                   {text}
                 </ChakraLink>
               )
+            )}
+            {isLoggedIn && (
+              <Text
+                title="Logout"
+                fontSize="xl"
+                cursor="pointer"
+                onClick={showLogoutModal}
+              >
+                Logout
+              </Text>
             )}
           </VStack>
         </DrawerBody>

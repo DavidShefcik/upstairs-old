@@ -1,12 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Flex,
   Link as ChakraLink,
   HStack,
-  CSSObject,
   Box,
+  StyleProps,
+  Text,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
+import NiceModal from "@ebay/nice-modal-react";
 
 import {
   authenticatedNavLinks,
@@ -16,39 +18,64 @@ import useDeviceSize from "~/hooks/useDeviceSize";
 import { useMobileMenuContext } from "~/context/ui/MobileMenu";
 import PageWidth from "./PageWidth";
 import { useSessionContext } from "~/context/Session";
+import LogoutModal from "./modals/LogoutModal";
 
 export const HEADER_HEIGHT = "60px";
 
 const HAMBURGER_ICON_SIZE = 8;
 
-const LINK_ACTION_STYLE: CSSObject = {
+const LINK_ACTION_STYLE: StyleProps = {
   textDecoration: "none",
   textColor: "gray.100",
 };
 
 function RightLinks() {
   const { isLoggedIn } = useSessionContext();
+  const navigate = useNavigate();
+
+  const showLogoutModal = () => {
+    NiceModal.show(LogoutModal, {
+      onSuccess: () => navigate("/"),
+    });
+  };
 
   return (
     <HStack spacing="5">
-      {(isLoggedIn ? authenticatedNavLinks : unauthenticatedNavLinks).map(
-        ({ text, path }) => (
-          <ChakraLink
-            key={path}
-            as={Link}
-            to={path}
-            title={text}
+      <>
+        {(isLoggedIn ? authenticatedNavLinks : unauthenticatedNavLinks).map(
+          ({ text, path }) => (
+            <ChakraLink
+              key={path}
+              as={Link}
+              to={path}
+              title={text}
+              fontSize="lg"
+              textColor="gray.200"
+              textDecoration="none"
+              fontWeight="bold"
+              _hover={LINK_ACTION_STYLE}
+              _focus={LINK_ACTION_STYLE}
+            >
+              {text}
+            </ChakraLink>
+          )
+        )}
+        {isLoggedIn && (
+          <Text
+            title="Logout"
             fontSize="lg"
             textColor="gray.200"
             textDecoration="none"
             fontWeight="bold"
+            cursor="pointer"
             _hover={LINK_ACTION_STYLE}
             _focus={LINK_ACTION_STYLE}
+            onClick={showLogoutModal}
           >
-            {text}
-          </ChakraLink>
-        )
-      )}
+            Logout
+          </Text>
+        )}
+      </>
     </HStack>
   );
 }
