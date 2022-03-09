@@ -58,7 +58,7 @@ export default NiceModal.create<Props>(({ onSuccess }) => {
       closeOnOverlayClick={!loading}
     >
       <ModalOverlay />
-      <ModalContent overflow="hidden">
+      <ModalContent overflow="hidden" mx="2">
         <ModalHeader>Logout</ModalHeader>
         <ModalBody mb="6" mt="2">
           <Text color={error && "red.600"}>
