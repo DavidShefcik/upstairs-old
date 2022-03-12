@@ -1,8 +1,8 @@
 import { useMediaQuery } from "@chakra-ui/react";
 
-const MAXIMUM_MOBILE_SIZE = 768;
-const MAXIMUM_DESKTOP_SIZE = 1440;
-const MINIMUM_ULTRAWIDE_SIZE = MAXIMUM_DESKTOP_SIZE + 1;
+export const MAXIMUM_MOBILE_SIZE = 768;
+export const MAXIMUM_DESKTOP_SIZE = 1440;
+export const MINIMUM_ULTRAWIDE_SIZE = MAXIMUM_DESKTOP_SIZE + 1;
 
 interface ReturnType {
   isMobile: boolean;

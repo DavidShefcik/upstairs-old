@@ -1,13 +1,15 @@
 import { ReactNode } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, StyleProps } from "@chakra-ui/react";
 
 import useDeviceSize from "~/hooks/useDeviceSize";
 
-interface Props {
+type Props = StyleProps & {
   children: ReactNode;
-}
+};
 
-export default function PageWidth({ children }: Props) {
+export default function PageWidth(props: Props) {
+  const { children } = props;
+
   const { isMobile, isDesktop, isUltrawide } = useDeviceSize();
 
   let width = "2";
@@ -20,7 +22,13 @@ export default function PageWidth({ children }: Props) {
   }
 
   return (
-    <Flex width="100%" height="100%" flexDirection="column" alignItems="center">
+    <Flex
+      width="100%"
+      height="100%"
+      flexDirection="column"
+      alignItems="center"
+      {...props}
+    >
       <Box {...{ width }} height="100%">
         {children}
       </Box>
