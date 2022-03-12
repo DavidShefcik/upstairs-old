@@ -22,6 +22,7 @@ export default function HomePage() {
         justifyContent="center"
         alignItems="center"
         backgroundColor="brand.100"
+        paddingY={isMobile ? "8" : "0"}
       >
         <PageWidth mx="2">
           <Stack
