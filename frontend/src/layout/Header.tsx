@@ -108,6 +108,7 @@ function HamburgerMenu() {
 
 export default function Header() {
   const { isMobile } = useDeviceSize();
+  const { isLoggedIn } = useSessionContext();
 
   return (
     <Box
@@ -128,7 +129,7 @@ export default function Header() {
         >
           <ChakraLink
             as={Link}
-            to="/"
+            to={isLoggedIn ? "/feed" : "/"}
             title="Upstairs"
             fontSize="2xl"
             fontWeight="bold"
