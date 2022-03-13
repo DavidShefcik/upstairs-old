@@ -4,7 +4,7 @@ import { InfoIcon, ViewIcon, LockIcon } from "@chakra-ui/icons";
 
 import useDeviceSize from "~/hooks/useDeviceSize";
 import LinkMenu, { ILinkMenuItem } from "~/layout/LinkMenu";
-import PageWidth from "../PageWidth";
+import PageWidth from "~/layout/PageWidth";
 
 const links: ILinkMenuItem[] = [
   {

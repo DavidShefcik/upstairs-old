@@ -1,6 +1,6 @@
 import { Text } from "@chakra-ui/react";
 
-import SettingsContent from "~/layout/pages/SettingsContent";
+import SettingsContent from "~/layout/pages/settings/SettingsContent";
 
 export default function SecuritySettings() {
   return (
