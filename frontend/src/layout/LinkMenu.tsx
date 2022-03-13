@@ -10,6 +10,7 @@ import {
 import { IconProps } from "@chakra-ui/icons";
 
 import { COLORS } from "~/constants/colors";
+import useDeviceSize from "~/hooks/useDeviceSize";
 
 export interface ILink {
   text: string;
@@ -39,6 +40,8 @@ const isSectionLabel = (item: ILinkMenuItem): item is ISectionLabel =>
   (item as ILink).path === undefined;
 
 export default function LinkMenu({ links, activeLink }: Props) {
+  const { isMobile } = useDeviceSize();
+
   return (
     <VStack spacing="2">
       {links.map((item) => (
@@ -53,6 +56,7 @@ export default function LinkMenu({ links, activeLink }: Props) {
               borderRadius="3xl"
               transition="all 0.1s linear"
               color={ITEM_COLOR}
+              width="100%"
               _hover={{
                 backgroundColor: HOVER_BACKGROUND_COLOR,
                 color: ITEM_COLOR,
@@ -66,7 +70,7 @@ export default function LinkMenu({ links, activeLink }: Props) {
                 flexDirection="row"
                 justifyContent="flex-start"
                 alignItems="center"
-                width="48"
+                width={isMobile ? "100%" : "48"}
                 height="6"
                 spacing="4"
               >
@@ -81,7 +85,8 @@ export default function LinkMenu({ links, activeLink }: Props) {
           ) : (
             <Text
               width="100%"
-              textAlign="left"
+              textAlign={isMobile ? "center" : "left"}
+              fontSize={isMobile ? "2xl" : "md"}
               px="4"
               py="1"
               fontWeight="bold"

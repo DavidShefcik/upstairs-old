@@ -34,7 +34,11 @@ export default function Settings() {
   return (
     <Flex flex={1}>
       <PageWidth>
-        <Flex flex={1} flexDirection={isMobile ? "column" : "row"} py="8">
+        <Flex
+          flex={1}
+          flexDirection={isMobile ? "column" : "row"}
+          py={isMobile ? "2" : "8"}
+        >
           <LinkMenu links={links} activeLink={location.pathname} />
           <Box overflowX="hidden" overflowY="auto" px="10">
             <Outlet />
