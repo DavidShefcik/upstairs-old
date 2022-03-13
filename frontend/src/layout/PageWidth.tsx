@@ -7,6 +7,10 @@ type Props = StyleProps & {
   children: ReactNode;
 };
 
+const MOBILE_WIDTH = "95%";
+const DESKTOP_WIDTH = "75%";
+const ULTRAWIDE_WIDTH = "60%";
+
 export default function PageWidth(props: Props) {
   const { children } = props;
 
@@ -14,11 +18,11 @@ export default function PageWidth(props: Props) {
 
   let width = "2";
   if (isMobile) {
-    width = "95%";
+    width = MOBILE_WIDTH;
   } else if (isDesktop) {
-    width = "75%";
+    width = DESKTOP_WIDTH;
   } else if (isUltrawide) {
-    width = "60%";
+    width = ULTRAWIDE_WIDTH;
   }
 
   return (

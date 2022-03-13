@@ -3,6 +3,7 @@ export const COLORS = {
   BRAND_PURPLE: "#6122bf",
   BRAND_MEDIUM_PURPLE: "#4b149c",
   BRAND_DARK_PURPLE: "#3a0c7d",
+  OPACITY_BRAND_PURPLE: "rgba(97, 34, 191, 0.3)",
   // White
   WHITE: "#ffffff",
   ALMOST_WHITE: "#f2f2f2",
