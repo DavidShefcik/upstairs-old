@@ -1,3 +1,11 @@
+import { Text } from "@chakra-ui/react";
+
+import SettingsContent from "~/layout/pages/SettingsContent";
+
 export default function ProfileSettings() {
-  return <div>Profile Settings</div>;
+  return (
+    <SettingsContent title="Profile Settings">
+      <Text>Test</Text>
+    </SettingsContent>
+  );
 }

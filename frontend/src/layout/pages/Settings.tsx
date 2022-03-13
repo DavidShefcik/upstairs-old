@@ -40,9 +40,7 @@ export default function Settings() {
           py={isMobile ? "2" : "8"}
         >
           <LinkMenu links={links} activeLink={location.pathname} />
-          <Box overflowX="hidden" overflowY="auto" px="10">
-            <Outlet />
-          </Box>
+          <Outlet />
         </Flex>
       </PageWidth>
     </Flex>
