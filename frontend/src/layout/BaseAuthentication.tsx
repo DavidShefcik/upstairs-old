@@ -15,7 +15,6 @@ import {
   FormControlProps,
   FormControl,
   FormLabel,
-  Input,
   FormErrorMessage,
   Link as ChakraLink,
   PinInput,
@@ -29,6 +28,8 @@ import _omit from "lodash.omit";
 import useDeviceSize from "~/hooks/useDeviceSize";
 import { ILink } from "~/constants/links";
 import { isValidString } from "~/utils/strings";
+import StyledInput from "~/components/inputs/StyledInput";
+import { INPUT_STYLING } from "~/constants/theme";
 
 type BaseAuthenticationInput<T extends InputProps | PinInputProps> = Omit<
   FormControlProps,
@@ -239,14 +240,6 @@ export default function BaseAuthentication<
   );
 }
 
-const BASE_AUTHENTICATION_INPUT_STYLING = {
-  borderColor: "gray.400",
-  focusBorderColor: "brand.600",
-  _hover: {
-    borderColor: "gray.500",
-  },
-};
-
 function BaseAuthenticationInput<T>(props: BaseAuthenticationInputProps<T>) {
   const { label, name, error, disabled, children, centerLabel } = props;
 
@@ -274,7 +267,7 @@ export function BaseAuthenticationTextInput(
 
   return (
     <BaseAuthenticationInput<InputProps> {...props}>
-      <Input {...props} {...BASE_AUTHENTICATION_INPUT_STYLING} id={name} />
+      <StyledInput {...props} id={name} />
     </BaseAuthenticationInput>
   );
 }
@@ -291,12 +284,12 @@ export function BaseAuthenticationPinInput(
     >
       <HStack spacing="3" width="100%" justifyContent="center">
         <PinInput otp {...propsWithoutInvalidDOMValues}>
-          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} autoFocus />
-          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
-          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
-          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
-          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
-          <PinInputField {...BASE_AUTHENTICATION_INPUT_STYLING} />
+          <PinInputField {...INPUT_STYLING} autoFocus />
+          <PinInputField {...INPUT_STYLING} />
+          <PinInputField {...INPUT_STYLING} />
+          <PinInputField {...INPUT_STYLING} />
+          <PinInputField {...INPUT_STYLING} />
+          <PinInputField {...INPUT_STYLING} />
         </PinInput>
       </HStack>
     </BaseAuthenticationInput>

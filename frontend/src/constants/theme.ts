@@ -2,6 +2,14 @@ import { extendTheme } from "@chakra-ui/react";
 
 import { COLORS } from "./colors";
 
+export const INPUT_STYLING = {
+  borderColor: "gray.400",
+  focusBorderColor: "brand.600",
+  _hover: {
+    borderColor: "gray.500",
+  },
+};
+
 const overrides = {
   colors: {
     brand: {
