@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Drawer,
   DrawerOverlay,
@@ -10,7 +10,6 @@ import {
   VStack,
   Text,
 } from "@chakra-ui/react";
-import NiceModal from "@ebay/nice-modal-react";
 
 import { useMobileMenuContext } from "~/context/ui/MobileMenu";
 import {
@@ -19,14 +18,14 @@ import {
 } from "~/constants/links";
 import useDeviceSize from "~/hooks/useDeviceSize";
 import { useSessionContext } from "~/context/Session";
-import LogoutModal from "./modals/LogoutModal";
+import useLogoutModal from "~/hooks/modals/useLogoutModal";
 
 export default function MobileMenu() {
   const { isOpen, setIsOpen } = useMobileMenuContext();
   const { isLoggedIn } = useSessionContext();
   const { isMobile } = useDeviceSize();
-  const navigate = useNavigate();
   const location = useLocation();
+  const { showLogoutModal } = useLogoutModal();
 
   useEffect(() => {
     if (isOpen && !isMobile) {
@@ -39,12 +38,6 @@ export default function MobileMenu() {
       setIsOpen(false);
     }
   }, [location]);
-
-  const showLogoutModal = () => {
-    NiceModal.show(LogoutModal, {
-      onSuccess: () => navigate("/"),
-    });
-  };
 
   return (
     <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>

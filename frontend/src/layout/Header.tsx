@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Flex,
   Link as ChakraLink,
@@ -8,7 +8,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import NiceModal from "@ebay/nice-modal-react";
 
 import {
   authenticatedNavLinks,
@@ -18,7 +17,7 @@ import useDeviceSize from "~/hooks/useDeviceSize";
 import { useMobileMenuContext } from "~/context/ui/MobileMenu";
 import PageWidth from "./PageWidth";
 import { useSessionContext } from "~/context/Session";
-import LogoutModal from "./modals/LogoutModal";
+import useLogoutModal from "~/hooks/modals/useLogoutModal";
 
 export const HEADER_HEIGHT = "60px";
 
@@ -31,13 +30,7 @@ const LINK_ACTION_STYLE: StyleProps = {
 
 function RightLinks() {
   const { isLoggedIn } = useSessionContext();
-  const navigate = useNavigate();
-
-  const showLogoutModal = () => {
-    NiceModal.show(LogoutModal, {
-      onSuccess: () => navigate("/"),
-    });
-  };
+  const { showLogoutModal } = useLogoutModal();
 
   return (
     <HStack spacing="5">
