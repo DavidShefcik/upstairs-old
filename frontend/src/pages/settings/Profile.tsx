@@ -6,12 +6,12 @@ import SettingsSection from "~/layout/pages/settings/SettingsSection";
 export default function ProfileSettings() {
   return (
     <SettingsContent title="Profile Settings">
-      <SettingsSection title="Update profile details">
-        {/* Profile picture */}
-        {/* Banner picture */}
-        {/* Bio */}
-        <Text>TODO</Text>
-      </SettingsSection>
+      {/* <SettingsSection title="Update profile details"> */}
+      {/* Profile picture */}
+      {/* Banner picture */}
+      {/* Bio */}
+      <Text>TODO</Text>
+      {/* </SettingsSection> */}
     </SettingsContent>
   );
 }

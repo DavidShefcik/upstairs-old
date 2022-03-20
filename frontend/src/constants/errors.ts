@@ -6,6 +6,7 @@ export enum ErrorMessages {
   INVALID_EMAIL = "invalid-email",
   INVALID_PASSWORD = "invalid-password",
   INVALID_NAME = "invalid-name",
+  INVALID_ADDRESS = "invalid-address",
   // Login
   USER_NOT_FOUND = "user-not-found",
   INCORRECT_PASSWORD = "incorrect-password",
@@ -23,6 +24,7 @@ export const humanReadableErrorMessages: Record<ErrorMessages, string> = {
   [ErrorMessages.INVALID_EMAIL]: "Email is invalid!",
   [ErrorMessages.INVALID_PASSWORD]: "Password is invalid!",
   [ErrorMessages.INVALID_NAME]: "Name is invalid!",
+  [ErrorMessages.INVALID_ADDRESS]: "Address is invalid!",
   // Login
   [ErrorMessages.USER_NOT_FOUND]: "User not found!",
   [ErrorMessages.INCORRECT_PASSWORD]: "Incorrect password!",

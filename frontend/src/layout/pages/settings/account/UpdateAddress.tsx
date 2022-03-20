@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Stack, VStack } from "@chakra-ui/react";
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 
 import SettingsSection from "~/layout/pages/settings/SettingsSection";
 import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
@@ -11,20 +11,17 @@ import { INPUT_SETTINGS } from "~/constants/inputs";
 import { State, STATES } from "~/constants/states";
 import ZipCodeInput from "~/components/inputs/ZipCodeInput";
 import { isValidString } from "~/utils/strings";
+import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 
 const UPDATE_ACCOUNT_MUTATION = gql`
   ${CURRENT_USER_FRAGMENT}
   mutation UpdateAccountMutation(
-    $firstName: String
-    $lastName: String
     $streetAddress: String
     $cityAddress: String
     $stateAddress: String
     $zipCodeAddress: String
   ) {
     updateAccount(
-      firstName: $firstName
-      lastName: $lastName
       streetAddress: $streetAddress
       cityAddress: $cityAddress
       stateAddress: $stateAddress
@@ -37,6 +34,19 @@ const UPDATE_ACCOUNT_MUTATION = gql`
     }
   }
 `;
+
+interface UpdateAddressFields {
+  streetAddress: string;
+  cityAddress: string;
+  stateAddress: string;
+  zipCodeAddress: string;
+}
+interface UpdateAddressResponse {
+  updateAccount: {
+    success: boolean;
+    user?: User;
+  };
+}
 
 export default function UpdateDetails() {
   const { isMobile } = useDeviceSize();
@@ -51,17 +61,7 @@ export default function UpdateDetails() {
   const [stateAddressError, setStateAddressError] = useState("");
   const [zipCodeAddressError, setZipCodeAddressError] = useState("");
 
-  const [
-    requestAccountUpdate,
-    { loading: updateAddressLoading, error: updateAddressError },
-  ] = useMutation(UPDATE_ACCOUNT_MUTATION, {
-    variables: {
-      streetAddress,
-      cityAddress,
-      stateAddress,
-      zipCodeAddress,
-    },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const setAllErrors = (message: string) => {
     setStreetAddressError(message);
@@ -69,49 +69,22 @@ export default function UpdateDetails() {
     setStateAddressError(message);
     setZipCodeAddressError(message);
   };
+  const onError = (error: ApolloError) => {
+    const { networkError, graphQLErrors } = error;
 
-  const handleAddressUpdate = async () => {
-    setAllErrors("");
-
-    let hasError = false;
-
-    if (!isValidString(streetAddress)) {
-      setStreetAddressError("Street address is required!");
-
-      hasError = true;
+    if (networkError) {
+      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+    } else {
+      graphQLErrors.forEach(({ message }) => {
+        switch (message) {
+          case ErrorMessages.INVALID_ADDRESS:
+            setAllErrors(humanReadableErrorMessages[message]);
+            break;
+          default:
+            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+        }
+      });
     }
-    if (!isValidString(cityAddress)) {
-      setCityAddressError("City is required!");
-
-      hasError = true;
-    }
-    if (!isValidString(stateAddress)) {
-      setStateAddressError("State is required!");
-
-      hasError = true;
-    }
-    if (!isValidString(zipCodeAddress)) {
-      setZipCodeAddressError("Zip code is required!");
-
-      hasError = true;
-    }
-
-    if (hasError) {
-      return;
-    }
-
-    // Validate zip code
-    if (zipCodeAddress.length < 5) {
-      setZipCodeAddressError("Zip code is invalid!");
-
-      hasError = true;
-    }
-
-    if (hasError) {
-      return;
-    }
-
-    await requestAccountUpdate();
   };
   const handleCancel = () => {
     setAllErrors("");
@@ -121,32 +94,69 @@ export default function UpdateDetails() {
     setStateAddress("");
     setZipCodeAddress("");
   };
+  const customValidation = (): boolean => {
+    // Validate zip code
+    if (zipCodeAddress.length < 5) {
+      setZipCodeAddressError("Zip code is invalid!");
 
-  useEffect(() => {
-    if (updateAddressError) {
-      setAllErrors(updateAddressError.message);
+      return false;
+    } else {
+      return true;
     }
-  }, [updateAddressError]);
+  };
 
   return (
-    <SettingsSection
+    <SettingsSection<UpdateAddressFields, UpdateAddressResponse>
+      {...{ isSubmitting, setIsSubmitting }}
       title="Update address"
       showButtons
-      submitLoading={updateAddressLoading}
-      onSubmit={handleAddressUpdate}
+      setErrors={{
+        streetAddress: setStreetAddressError,
+        cityAddress: setCityAddressError,
+        stateAddress: setStateAddressError,
+        zipCodeAddress: setZipCodeAddressError,
+      }}
+      data={{
+        streetAddress,
+        cityAddress,
+        stateAddress,
+        zipCodeAddress,
+      }}
+      fields={{
+        streetAddress: {
+          fieldName: "Street address",
+          isRequired: true,
+        },
+        cityAddress: {
+          fieldName: "City",
+          isRequired: true,
+        },
+        stateAddress: {
+          fieldName: "State",
+          isRequired: true,
+        },
+        zipCodeAddress: {
+          fieldName: "Zip code",
+          isRequired: true,
+        },
+      }}
+      mutation={UPDATE_ACCOUNT_MUTATION}
+      onError={onError}
       onCancel={handleCancel}
+      customValidation={customValidation}
     >
       {/* Address */}
       <VStack spacing="4">
         {/* Street Address */}
         <FormInput
           id="streetAddress"
+          name="streetAddress"
           label="Street Address"
           inputType={INPUT_TYPE.TEXT}
           maxLength={INPUT_SETTINGS.street_address.maxLength}
           value={streetAddress}
           onChange={(val) => setStreetAddress(val)}
-          disabled={updateAddressLoading}
+          disabled={isSubmitting}
           error={streetAddressError}
         />
         <Stack
@@ -158,38 +168,41 @@ export default function UpdateDetails() {
           {/* City Address */}
           <FormInput
             id="cityAddress"
+            name="cityAddress"
             label="City"
             inputType={INPUT_TYPE.TEXT}
             maxLength={INPUT_SETTINGS.city_address.maxLength}
             value={cityAddress}
             onChange={(val) => setCityAddress(val)}
-            disabled={updateAddressLoading}
+            disabled={isSubmitting}
             error={cityAddressError}
           />
           {/* State address */}
           <FormInput<State>
             id="state"
+            name="stateAddress"
             label="State"
             inputType={INPUT_TYPE.SELECT}
             options={STATES}
             uniqueKey="abbreviation"
             value={stateAddress}
             onChange={(val) => setStateAddress(val)}
-            disabled={updateAddressLoading}
+            disabled={isSubmitting}
             error={stateAddressError}
           />
           {/* Zip code */}
           <FormInput
             id="zipCodeAddress"
+            name="zipCodeAddress"
             label="Zip Code"
             inputType={INPUT_TYPE.CUSTOM}
-            disabled={updateAddressLoading}
+            disabled={isSubmitting}
             error={zipCodeAddressError}
           >
             <ZipCodeInput
               value={zipCodeAddress}
               onChange={setZipCodeAddress}
-              isDisabled={updateAddressLoading}
+              isDisabled={isSubmitting}
             />
           </FormInput>
         </Stack>

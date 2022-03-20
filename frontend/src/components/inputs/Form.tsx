@@ -11,7 +11,7 @@ interface FormField {
   isRequired: boolean;
 }
 
-interface FormProps<T, R> {
+export interface FormProps<T, R> {
   submitButtonText?: string;
   children: ReactNode;
   data: T;

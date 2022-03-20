@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { VStack } from "@chakra-ui/react";
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql } from "@apollo/client";
 
 import SettingsSection from "~/layout/pages/settings/SettingsSection";
 import { INPUT_SETTINGS } from "~/constants/inputs";
-import { isValidString } from "~/utils/strings";
 import { useSessionContext } from "~/context/Session";
 import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 
 const UPDATE_ACCOUNT_MUTATION = gql`
   mutation UpdateAccountMutation($email: String) {
@@ -19,6 +19,17 @@ const UPDATE_ACCOUNT_MUTATION = gql`
   }
 `;
 
+interface UpdateEmailFields {
+  email: string;
+  confirmEmail: string;
+}
+interface UpdateEmailResponse {
+  updateAccount: {
+    success: boolean;
+    user?: Pick<User, "email">;
+  };
+}
+
 export default function UpdateEmail() {
   const { user } = useSessionContext();
 
@@ -27,84 +38,88 @@ export default function UpdateEmail() {
   const [emailError, setEmailError] = useState("");
   const [confirmEmailError, setConfirmEmailError] = useState("");
 
-  const [
-    requestEmailUpdate,
-    { loading: updateEmailLoading, error: updateEmailError },
-  ] = useMutation(UPDATE_ACCOUNT_MUTATION, {
-    variables: {
-      email,
-    },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleEmailUpdate = async () => {
-    setEmailError("");
-    setConfirmEmailError("");
-
-    let hasError = false;
-
-    if (!isValidString(email)) {
-      setEmailError("Email is required!");
-
-      hasError = true;
-    }
-    if (!isValidString(confirmEmail)) {
-      setConfirmEmailError("Confirm email is required!");
-
-      hasError = true;
-    }
-
-    if (hasError) {
-      return;
-    }
-
-    await requestEmailUpdate();
+  const setAllErrors = (message: string) => {
+    setEmailError(message);
+    setConfirmEmailError(message);
   };
-  const handleCancel = () => {
+  const onError = (error: ApolloError) => {
+    const { networkError, graphQLErrors } = error;
+
+    if (networkError) {
+      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+    } else {
+      graphQLErrors.forEach(({ message }) => {
+        switch (message) {
+          case ErrorMessages.INVALID_EMAIL:
+          case ErrorMessages.EMAIL_ALREADY_IN_USE:
+            setEmailError(humanReadableErrorMessages[message]);
+            break;
+          default:
+            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+        }
+      });
+    }
+  };
+  const onCancel = () => {
     setEmail(user!.email);
     setConfirmEmail("");
-
-    setEmailError("");
-    setConfirmEmailError("");
+    setAllErrors("");
   };
 
-  useEffect(() => {
-    if (updateEmailError) {
-      setEmailError(updateEmailError.message);
-      setConfirmEmailError(updateEmailError.message);
-    }
-  }, [updateEmailError]);
-
   return (
-    <SettingsSection
+    <SettingsSection<UpdateEmailFields, UpdateEmailResponse>
+      {...{ isSubmitting, setIsSubmitting }}
       title="Update account email"
       showButtons
-      submitLoading={updateEmailLoading}
-      onSubmit={handleEmailUpdate}
-      onCancel={handleCancel}
+      setErrors={{
+        email: setEmailError,
+        confirmEmail: setConfirmEmailError,
+      }}
+      data={{
+        email,
+        confirmEmail,
+      }}
+      fields={{
+        email: {
+          fieldName: "Email",
+          isRequired: true,
+        },
+        confirmEmail: {
+          fieldName: "Confirm email",
+          isRequired: true,
+        },
+      }}
+      mutation={UPDATE_ACCOUNT_MUTATION}
+      onError={onError}
+      onCancel={onCancel}
     >
       <VStack spacing="4">
         {/* Email */}
         <FormInput
           id="email"
+          name="email"
           label="Email Address"
           inputType={INPUT_TYPE.TEXT}
           type="email"
           maxLength={INPUT_SETTINGS.email.maxLength}
           value={email}
           onChange={(val) => setEmail(val)}
-          disabled={updateEmailLoading}
+          disabled={isSubmitting}
           error={emailError}
         />
         {/* Confirm email */}
         <FormInput
           id="confirmEmail"
+          name="confirmEmail"
           label="Confirm Email Address"
           inputType={INPUT_TYPE.TEXT}
           type="email"
           maxLength={INPUT_SETTINGS.email.maxLength}
           value={confirmEmail}
           onChange={(val) => setConfirmEmail(val)}
-          disabled={updateEmailLoading}
+          disabled={isSubmitting}
           error={confirmEmailError}
         />
       </VStack>

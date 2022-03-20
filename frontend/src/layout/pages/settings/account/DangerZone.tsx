@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Button } from "@chakra-ui/react";
 
@@ -12,18 +13,40 @@ const DELETE_ACCOUNT_MUTATION = gql`
     }
   }
 `;
+interface DeleteAccountResponse {
+  updateAccount: {
+    needToVerify: boolean;
+    success: boolean;
+  };
+}
 
 export default function UpdateEmail() {
   const { user } = useSessionContext();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [
     requestAccountDeletion,
     { loading: deleteAccountLoading, error: deleteAccountError },
   ] = useMutation(DELETE_ACCOUNT_MUTATION);
 
+  useEffect(() => {
+    setIsSubmitting(deleteAccountLoading);
+  }, [deleteAccountLoading]);
+
   return (
-    <SettingsSection title="Danger Zone" titleColor="red.500">
-      <Button isLoading={deleteAccountLoading} colorScheme="red">
+    <SettingsSection<{}, DeleteAccountResponse>
+      {...{ isSubmitting, setIsSubmitting }}
+      title="Danger Zone"
+      titleColor="red.500"
+      data={{}}
+      fields={{}}
+      setErrors={{}}
+      onError={() => {}}
+      onCancel={() => {}}
+      mutation={DELETE_ACCOUNT_MUTATION}
+    >
+      <Button type="submit" isLoading={deleteAccountLoading} colorScheme="red">
         Delete Account
       </Button>
     </SettingsSection>
