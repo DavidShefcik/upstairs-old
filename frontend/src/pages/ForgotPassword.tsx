@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { gql } from "@apollo/client";
 
-import BaseAuthentication, {
-  BaseAuthenticationTextInput,
-} from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { forgotPasswordFormLinks } from "~/constants/links";
+import Form from "~/components/inputs/Form";
+import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import BaseAuthentication from "~/layout/BaseAuthentication";
 
 const REQUEST_PASSWORD_RESET_MUTATION = gql`
   mutation RequestPasswordResetMutation($email: String!) {
@@ -35,39 +35,45 @@ export default function ForgotPassword() {
   };
 
   return (
-    <BaseAuthentication<ForgotPasswordFields, ForgotPasswordResponse>
-      {...{ isSubmitting, setIsSubmitting, onSuccess }}
+    <BaseAuthentication
       title="Forgot Password?"
-      submitButtonText="Request Password Reset"
       links={forgotPasswordFormLinks}
-      data={{
-        email,
-      }}
-      mutation={REQUEST_PASSWORD_RESET_MUTATION}
-      setErrors={{
-        email: setEmailError,
-      }}
-      fields={{
-        email: {
-          fieldName: "Email",
-          isRequired: true,
-        },
-      }}
-      onError={(error) => console.log("error")}
     >
-      <BaseAuthenticationTextInput
-        type="email"
-        label="Email Address"
-        name="email"
-        error={emailError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.email.maxLength}
-        autoComplete="email"
-        value={email}
-        onChange={(event) => setEmail(event.target.value)}
-        isRequired
-        autoFocus
-      />
+      <Form<ForgotPasswordFields, ForgotPasswordResponse>
+        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        submitButtonText="Request Password Reset"
+        showSubmitButton
+        data={{
+          email,
+        }}
+        mutation={REQUEST_PASSWORD_RESET_MUTATION}
+        setErrors={{
+          email: setEmailError,
+        }}
+        fields={{
+          email: {
+            fieldName: "Email",
+            isRequired: true,
+          },
+        }}
+        onError={(error) => console.log("error")}
+      >
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="email"
+          label="Email Address"
+          id="email"
+          name="email"
+          error={emailError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.email.maxLength}
+          autoComplete="email"
+          value={email}
+          onChange={(val) => setEmail(val)}
+          isRequired
+          autoFocus
+        />
+      </Form>
     </BaseAuthentication>
   );
 }

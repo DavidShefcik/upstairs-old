@@ -3,14 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { gql, ApolloError } from "@apollo/client";
 import { Text, Link as ChakraLink } from "@chakra-ui/react";
 
-import BaseAuthentication, {
-  BaseAuthenticationTextInput,
-} from "~/layout/BaseAuthentication";
+import BaseAuthentication from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { registerFormLinks } from "~/constants/links";
 import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
 import { useSessionContext } from "~/context/Session";
+import Form from "~/components/inputs/Form";
+import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
 
 const REGISTER_MUTATION = gql`
   ${CURRENT_USER_FRAGMENT}
@@ -117,117 +117,134 @@ export default function Register() {
   };
 
   return (
-    <BaseAuthentication<RegisterFields, RegisterResponse>
-      {...{ isSubmitting, setIsSubmitting, onSuccess }}
-      title="Register"
-      links={registerFormLinks}
-      data={{
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
-      }}
-      mutation={REGISTER_MUTATION}
-      setErrors={{
-        firstName: setFirstNameError,
-        lastName: setLastNameError,
-        email: setEmailError,
-        password: setPasswordError,
-        confirmPassword: setConfirmPasswordError,
-      }}
-      fields={{
-        firstName: {
-          fieldName: "First name",
-          isRequired: true,
-        },
-        lastName: {
-          fieldName: "Last name",
-          isRequired: true,
-        },
-        email: {
-          fieldName: "Email",
-          isRequired: true,
-        },
-        password: {
-          fieldName: "Password",
-          isRequired: true,
-        },
-        confirmPassword: {
-          fieldName: "Confirm password",
-          isRequired: true,
-        },
-      }}
-      onError={onError}
-      customValidation={customValidation}
-    >
-      <BaseAuthenticationTextInput
-        type="text"
-        label="First Name"
-        name="firstName"
-        error={firstNameError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.name.maxLength}
-        autoComplete="given-name"
-        value={firstName}
-        onChange={(event) => setFirstName(event.target.value)}
-        autoFocus
-        isRequired
-      />
-      <BaseAuthenticationTextInput
-        type="text"
-        label="Last Name"
-        name="lastName"
-        error={lastNameError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.name.maxLength}
-        autoComplete="family-name"
-        value={lastName}
-        onChange={(event) => setLastName(event.target.value)}
-        isRequired
-      />
-      <BaseAuthenticationTextInput
-        type="email"
-        label="Email Address"
-        name="email"
-        error={emailError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.email.maxLength}
-        autoComplete="email"
-        value={email}
-        onChange={(event) => setEmail(event.target.value)}
-        isRequired
-      />
-      <BaseAuthenticationTextInput
-        type="password"
-        label="Password"
-        name="password"
-        error={passwordError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.password.maxLength}
-        autoComplete="new-password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        isRequired
-      />
-      <BaseAuthenticationTextInput
-        type="password"
-        label="Confirm Password"
-        name="confirmPassword"
-        error={confirmPasswordError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.password.maxLength}
-        autoComplete="new-password"
-        value={confirmPassword}
-        onChange={(event) => setConfirmPassword(event.target.value)}
-        isRequired
-      />
-      <Text fontSize="sm">
-        By clicking "Register" you agree to our{" "}
-        <ChakraLink as={Link} to="/tos" title="Terms of Service" color="brand">
-          terms
-        </ChakraLink>
-      </Text>
+    <BaseAuthentication links={registerFormLinks} title="Register">
+      <Form<RegisterFields, RegisterResponse>
+        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        submitButtonText="Register"
+        showSubmitButton
+        data={{
+          firstName,
+          lastName,
+          email,
+          password,
+          confirmPassword,
+        }}
+        mutation={REGISTER_MUTATION}
+        setErrors={{
+          firstName: setFirstNameError,
+          lastName: setLastNameError,
+          email: setEmailError,
+          password: setPasswordError,
+          confirmPassword: setConfirmPasswordError,
+        }}
+        fields={{
+          firstName: {
+            fieldName: "First name",
+            isRequired: true,
+          },
+          lastName: {
+            fieldName: "Last name",
+            isRequired: true,
+          },
+          email: {
+            fieldName: "Email",
+            isRequired: true,
+          },
+          password: {
+            fieldName: "Password",
+            isRequired: true,
+          },
+          confirmPassword: {
+            fieldName: "Confirm password",
+            isRequired: true,
+          },
+        }}
+        onError={onError}
+        customValidation={customValidation}
+      >
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="text"
+          label="First Name"
+          id="firstName"
+          name="firstName"
+          error={firstNameError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.name.maxLength}
+          autoComplete="given-name"
+          value={firstName}
+          onChange={(val) => setFirstName(val)}
+          autoFocus
+          isRequired
+        />
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="text"
+          label="Last Name"
+          id="lastName"
+          name="lastName"
+          error={lastNameError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.name.maxLength}
+          autoComplete="family-name"
+          value={lastName}
+          onChange={(val) => setLastName(val)}
+          isRequired
+        />
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="email"
+          label="Email Address"
+          id="email"
+          name="email"
+          error={emailError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.email.maxLength}
+          autoComplete="email"
+          value={email}
+          onChange={(val) => setEmail(val)}
+          isRequired
+        />
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="password"
+          label="Password"
+          id="password"
+          name="password"
+          error={passwordError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.password.maxLength}
+          autoComplete="new-password"
+          value={password}
+          onChange={(val) => setPassword(val)}
+          isRequired
+        />
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="password"
+          label="Confirm Password"
+          id="confirmPassword"
+          name="confirmPassword"
+          error={confirmPasswordError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.password.maxLength}
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(val) => setConfirmPassword(val)}
+          isRequired
+        />
+        <Text fontSize="sm">
+          By clicking "Register" you agree to our{" "}
+          <ChakraLink
+            as={Link}
+            to="/tos"
+            title="Terms of Service"
+            color="brand"
+          >
+            terms
+          </ChakraLink>
+        </Text>
+      </Form>
     </BaseAuthentication>
   );
 }

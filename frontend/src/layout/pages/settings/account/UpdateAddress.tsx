@@ -9,7 +9,6 @@ import { useSessionContext } from "~/context/Session";
 import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { State, STATES } from "~/constants/states";
-import { isValidNumber } from "~/utils/number";
 import ZipCodeInput from "~/components/inputs/ZipCodeInput";
 import { isValidString } from "~/utils/strings";
 

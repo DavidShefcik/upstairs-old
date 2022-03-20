@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { gql } from "@apollo/client";
 
-import BaseAuthentication, {
-  BaseAuthenticationTextInput,
-} from "~/layout/BaseAuthentication";
+import BaseAuthentication from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
+import Form from "~/components/inputs/Form";
+import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
 
 const RESET_PASSWORD_MUTATION = gql`
   mutation ResetPasswordMutation($code: String!, $password: String!) {
@@ -37,55 +37,62 @@ export default function ResetPassword() {
   };
 
   return (
-    <BaseAuthentication<ResetPasswordFields, ResetPasswordResponse>
-      {...{ isSubmitting, setIsSubmitting, onSuccess }}
-      title="Reset Password"
-      data={{
-        password,
-        confirmPassword,
-      }}
-      mutation={RESET_PASSWORD_MUTATION}
-      setErrors={{
-        password: setPasswordError,
-        confirmPassword: setConfirmPasswordError,
-      }}
-      fields={{
-        password: {
-          fieldName: "Password",
-          isRequired: true,
-        },
-        confirmPassword: {
-          fieldName: "Confirm password",
-          isRequired: true,
-        },
-      }}
-      onError={(error) => console.log("error")}
-    >
-      <BaseAuthenticationTextInput
-        type="password"
-        label="Password"
-        name="password"
-        error={passwordError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.password.maxLength}
-        autoComplete="new-password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        isRequired
-        autoFocus
-      />
-      <BaseAuthenticationTextInput
-        type="password"
-        label="Confirm Password"
-        name="confirmPassword"
-        error={confirmPasswordError}
-        disabled={isSubmitting}
-        maxLength={INPUT_SETTINGS.password.maxLength}
-        autoComplete="new-password"
-        value={confirmPassword}
-        onChange={(event) => setConfirmPassword(event.target.value)}
-        isRequired
-      />
+    <BaseAuthentication title="Reset Password">
+      <Form<ResetPasswordFields, ResetPasswordResponse>
+        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        submitButtonText="Reset Password"
+        showSubmitButton
+        data={{
+          password,
+          confirmPassword,
+        }}
+        mutation={RESET_PASSWORD_MUTATION}
+        setErrors={{
+          password: setPasswordError,
+          confirmPassword: setConfirmPasswordError,
+        }}
+        fields={{
+          password: {
+            fieldName: "Password",
+            isRequired: true,
+          },
+          confirmPassword: {
+            fieldName: "Confirm password",
+            isRequired: true,
+          },
+        }}
+        onError={(error) => console.log("error")}
+      >
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="password"
+          label="Password"
+          id="password"
+          name="password"
+          error={passwordError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.password.maxLength}
+          autoComplete="new-password"
+          value={password}
+          onChange={(val) => setPassword(val)}
+          isRequired
+          autoFocus
+        />
+        <FormInput
+          inputType={INPUT_TYPE.TEXT}
+          type="password"
+          label="Confirm Password"
+          id="confirmPassword"
+          name="confirmPassword"
+          error={confirmPasswordError}
+          disabled={isSubmitting}
+          maxLength={INPUT_SETTINGS.password.maxLength}
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(val) => setConfirmPassword(val)}
+          isRequired
+        />
+      </Form>
     </BaseAuthentication>
   );
 }

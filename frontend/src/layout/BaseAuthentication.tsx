@@ -1,10 +1,4 @@
-import {
-  FormEvent,
-  Dispatch,
-  SetStateAction,
-  ReactNode,
-  ReactChild,
-} from "react";
+import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   Flex,
@@ -12,7 +6,6 @@ import {
   Text,
   Button,
   InputProps,
-  FormControlProps,
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -22,52 +15,15 @@ import {
   HStack,
   PinInputProps,
 } from "@chakra-ui/react";
-import { ApolloError, DocumentNode, useMutation } from "@apollo/client";
 import _omit from "lodash.omit";
 
 import useDeviceSize from "~/hooks/useDeviceSize";
 import { ILink } from "~/constants/links";
-import { isValidString } from "~/utils/strings";
-import StyledInput from "~/components/inputs/StyledInput";
-import { INPUT_STYLING } from "~/constants/theme";
 
-type BaseAuthenticationInput<T extends InputProps | PinInputProps> = Omit<
-  FormControlProps,
-  "onChange"
-> & {
-  label: string;
-  name: string;
-  error: string;
-  disabled?: boolean;
-} & Omit<T, "children">;
-type BaseAuthenticationInputProps<T> = BaseAuthenticationInput<T> & {
-  centerLabel?: boolean;
-  children: ReactChild;
-};
-type AuthenticationErrors<T> = Record<
-  keyof Partial<T>,
-  Dispatch<SetStateAction<string>>
->;
-interface BaseAuthenticationField {
-  fieldName: string;
-  isRequired: boolean;
-}
-
-interface BaseAuthenticationProps<T, R> {
+interface Props {
   title: string;
-  submitButtonText?: string;
   children: ReactNode;
-  data: T;
-  fields: Record<keyof T, BaseAuthenticationField>;
-  mutation: DocumentNode;
-  setErrors: AuthenticationErrors<T>;
-  isSubmitting: boolean;
-  setIsSubmitting: Dispatch<SetStateAction<boolean>>;
-  onError(error: ApolloError): void;
-  customValidation?(): boolean;
-  onSuccess?(data: R): void;
   links?: ILink[];
-  extraMutationVariables?: Record<string, string | number | boolean>;
 }
 
 const MOBILE_CONTAINER_WIDTH = "93%";
@@ -80,109 +36,8 @@ const DESKTOP_FORM_PADDING_X = "8";
  * inputs as key value pairs. R is the type of
  * the response when the mutation is successful
  */
-export default function BaseAuthentication<
-  T extends { [K in keyof T]: string },
-  R = undefined
->({
-  title,
-  submitButtonText = title,
-  children,
-  data,
-  fields,
-  mutation,
-  setErrors,
-  isSubmitting,
-  setIsSubmitting,
-  onError,
-  customValidation,
-  onSuccess,
-  links,
-  extraMutationVariables,
-}: BaseAuthenticationProps<T, R>) {
+export default function BaseAuthentication({ title, children, links }: Props) {
   const { isMobile } = useDeviceSize();
-
-  const [sendData, { loading, error }] = useMutation(mutation);
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    setIsSubmitting(true);
-    setAllErrors("");
-
-    // Validate inputs
-    const errors: Partial<Record<keyof T, string>> = {};
-
-    // Check if inputs are blank
-    for (const field in fields) {
-      const { fieldName, isRequired } = fields[field];
-      const value = data[field];
-
-      if (isRequired && !isValidString(value)) {
-        errors[field] = `${fieldName} is required!`;
-      }
-    }
-
-    // Set error messages
-    if (Object.keys(errors).length > 0) {
-      for (const key in errors) {
-        const errorMessage = errors[key];
-
-        if (errorMessage) {
-          setErrors[key](errorMessage);
-        }
-      }
-
-      setIsSubmitting(false);
-
-      return;
-    }
-
-    // Custom validation. We are already guaranteed that the required inputs are not blank
-    if (customValidation && !customValidation()) {
-      setIsSubmitting(false);
-
-      return;
-    }
-
-    await sendData({
-      variables: {
-        ...data,
-        ...extraMutationVariables,
-      },
-      onCompleted: (data: R) => {
-        setIsSubmitting(false);
-
-        if (onSuccess) {
-          onSuccess(data);
-        }
-      },
-      onError: (error) => {
-        setIsSubmitting(false);
-
-        onError(error);
-      },
-    });
-  };
-
-  const setAllErrors = (errorMessage: string) => {
-    const errors: Partial<Record<keyof T, string>> = {};
-
-    // Check if inputs are blank
-    for (const field in fields) {
-      errors[field] = errorMessage;
-    }
-
-    // Set error messages
-    if (Object.keys(errors).length > 0) {
-      for (const key in errors) {
-        const errMessage = errors[key];
-
-        if (errMessage !== undefined) {
-          setErrors[key](errMessage);
-        }
-      }
-    }
-  };
 
   return (
     <Flex
@@ -209,19 +64,7 @@ export default function BaseAuthentication<
         >
           {title}
         </Text>
-        <form noValidate onSubmit={handleSubmit} style={{ width: "100%" }}>
-          <VStack spacing="5" width="100%">
-            {children}
-            <Button
-              type="submit"
-              isLoading={loading || isSubmitting}
-              colorScheme="brand"
-              width="100%"
-            >
-              {submitButtonText}
-            </Button>
-          </VStack>
-        </form>
+        {children}
         <VStack spacing="2">
           {links?.map(({ path, text }) => (
             <ChakraLink
@@ -237,61 +80,5 @@ export default function BaseAuthentication<
         </VStack>
       </VStack>
     </Flex>
-  );
-}
-
-function BaseAuthenticationInput<T>(props: BaseAuthenticationInputProps<T>) {
-  const { label, name, error, disabled, children, centerLabel } = props;
-
-  const propsWithoutInvalidDOMValues = _omit(props, ["centerLabel"]);
-
-  return (
-    <FormControl
-      {...propsWithoutInvalidDOMValues}
-      isInvalid={!!error}
-      isDisabled={disabled}
-    >
-      <FormLabel htmlFor={name} textAlign={centerLabel ? "center" : "left"}>
-        {label}
-      </FormLabel>
-      {children}
-      {error && <FormErrorMessage>{error}</FormErrorMessage>}
-    </FormControl>
-  );
-}
-
-export function BaseAuthenticationTextInput(
-  props: BaseAuthenticationInput<InputProps>
-) {
-  const { name } = props;
-
-  return (
-    <BaseAuthenticationInput<InputProps> {...props}>
-      <StyledInput {...props} id={name} />
-    </BaseAuthenticationInput>
-  );
-}
-
-export function BaseAuthenticationPinInput(
-  props: BaseAuthenticationInput<PinInputProps>
-) {
-  const propsWithoutInvalidDOMValues = _omit(props, ["onComplete"]);
-
-  return (
-    <BaseAuthenticationInput<PinInputProps>
-      {...propsWithoutInvalidDOMValues}
-      centerLabel
-    >
-      <HStack spacing="3" width="100%" justifyContent="center">
-        <PinInput otp {...propsWithoutInvalidDOMValues}>
-          <PinInputField {...INPUT_STYLING} autoFocus />
-          <PinInputField {...INPUT_STYLING} />
-          <PinInputField {...INPUT_STYLING} />
-          <PinInputField {...INPUT_STYLING} />
-          <PinInputField {...INPUT_STYLING} />
-          <PinInputField {...INPUT_STYLING} />
-        </PinInput>
-      </HStack>
-    </BaseAuthenticationInput>
   );
 }
