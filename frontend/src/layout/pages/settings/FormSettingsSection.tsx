@@ -1,50 +1,57 @@
-import { FormEvent, ReactNode } from "react";
-import { Box, Text, Button, HStack } from "@chakra-ui/react";
-import FloatingBox from "~/components/FloatingBox";
+import { Box, Button, HStack } from "@chakra-ui/react";
+import _omit from "lodash.omit";
+
 import Form, { FormProps } from "~/components/inputs/Form";
+import BaseSettingsSection, {
+  BaseSettingsSectionProps,
+} from "./BaseSettingsSection";
 
 /**
  * T is the type of the fields, R
  * is the type of the response
  */
-export type Props<T, R> = FormProps<T, R> & {
-  title: string;
-  showButtons?: boolean;
-  titleColor?: string;
-  titleText?: string;
-  onCancel(): void;
-};
+export type Props<T, R> = FormProps<T, R> &
+  BaseSettingsSectionProps & {
+    showButtons?: boolean;
+    onCancel(): void;
+  };
 
 const BUTTON_WIDTH = "90px";
+const OMITTED_FORM_PROPS_FOR_SETTINGS_SECTION: Array<
+  keyof Props<unknown, unknown>
+> = [
+  "data",
+  "fields",
+  "mutation",
+  "onCancel",
+  "onError",
+  "setErrors",
+  "isSubmitting",
+  "setIsSubmitting",
+  "showButtons",
+  "customValidation",
+];
 
-export default function SettingsSection<
-  T extends { [K in keyof T]: string },
+export default function FormSettingsSection<
+  T extends { [K in keyof T]: string | boolean },
   R = undefined
 >(props: Props<T, R>) {
-  const {
-    titleColor = "gray.700",
-    titleText = "Save",
-    submitButtonText = "Save",
-  } = props;
+  const { submitButtonText = "Save", children, showButtons } = props;
 
   return (
-    <FloatingBox my="4" backgroundColor="gray.100">
-      <Text
-        color={titleColor}
-        fontWeight="medium"
-        fontStyle="italic"
-        pt="3"
-        pb="4"
-        px="4"
-        title={titleText}
-      >
-        {props.title}
-      </Text>
+    <BaseSettingsSection
+      {...(_omit(props, OMITTED_FORM_PROPS_FOR_SETTINGS_SECTION) as Props<
+        T,
+        R
+      >)}
+      mb="0"
+      mx="0"
+    >
       <Form<T, R> {...props}>
-        <Box px="4" mb="4" width="100%">
-          {props.children}
+        <Box width="100%" px="4" mx="4">
+          {children}
         </Box>
-        {props.showButtons && (
+        {showButtons && (
           <HStack
             spacing="4"
             flexDirection="row"
@@ -77,6 +84,6 @@ export default function SettingsSection<
           </HStack>
         )}
       </Form>
-    </FloatingBox>
+    </BaseSettingsSection>
   );
 }

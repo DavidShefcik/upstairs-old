@@ -1,17 +1,26 @@
 import { Text } from "@chakra-ui/react";
 
 import SettingsContent from "~/layout/pages/settings/SettingsContent";
-import SettingsSection from "~/layout/pages/settings/SettingsSection";
+import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
+
+/**
+ * TODO: Make this an interactive profile header view. Same
+ * basic floating box with save and cancel buttons like the
+ * other sections. Profile header has text box on name,
+ * text area on bio, upload photo on profile picture and banner
+ * hover. Hint text at bottom mentioning tap on images to update
+ * them
+ */
 
 export default function ProfileSettings() {
   return (
     <SettingsContent title="Profile Settings">
-      {/* <SettingsSection title="Update profile details"> */}
+      {/* <FormSettingsSection title="Update profile details"> */}
       {/* Profile picture */}
       {/* Banner picture */}
       {/* Bio */}
       <Text>TODO</Text>
-      {/* </SettingsSection> */}
+      {/* </FormSettingsSection> */}
     </SettingsContent>
   );
 }

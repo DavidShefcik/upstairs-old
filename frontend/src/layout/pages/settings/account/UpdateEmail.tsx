@@ -2,7 +2,7 @@ import { useState } from "react";
 import { VStack } from "@chakra-ui/react";
 import { ApolloError, gql } from "@apollo/client";
 
-import SettingsSection from "~/layout/pages/settings/SettingsSection";
+import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { useSessionContext } from "~/context/Session";
 import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
@@ -48,7 +48,9 @@ export default function UpdateEmail() {
     const { networkError, graphQLErrors } = error;
 
     if (networkError) {
-      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+      setAllErrors(
+        humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+      );
     } else {
       graphQLErrors.forEach(({ message }) => {
         switch (message) {
@@ -57,7 +59,9 @@ export default function UpdateEmail() {
             setEmailError(humanReadableErrorMessages[message]);
             break;
           default:
-            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+            setAllErrors(
+              humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+            );
         }
       });
     }
@@ -69,7 +73,7 @@ export default function UpdateEmail() {
   };
 
   return (
-    <SettingsSection<UpdateEmailFields, UpdateEmailResponse>
+    <FormSettingsSection<UpdateEmailFields, UpdateEmailResponse>
       {...{ isSubmitting, setIsSubmitting }}
       title="Update account email"
       showButtons
@@ -123,6 +127,6 @@ export default function UpdateEmail() {
           error={confirmEmailError}
         />
       </VStack>
-    </SettingsSection>
+    </FormSettingsSection>
   );
 }

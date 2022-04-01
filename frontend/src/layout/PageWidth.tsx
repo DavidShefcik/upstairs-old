@@ -8,17 +8,20 @@ type Props = StyleProps & {
 };
 
 const MOBILE_WIDTH = "95%";
+const TABLET_WIDTH = "80%";
 const DESKTOP_WIDTH = "75%";
 const ULTRAWIDE_WIDTH = "60%";
 
 export default function PageWidth(props: Props) {
   const { children } = props;
 
-  const { isMobile, isDesktop, isUltrawide } = useDeviceSize();
+  const { isMobile, isTablet, isDesktop, isUltrawide } = useDeviceSize();
 
-  let width = "2";
+  let width = "0";
   if (isMobile) {
     width = MOBILE_WIDTH;
+  } else if (isTablet) {
+    width = TABLET_WIDTH;
   } else if (isDesktop) {
     width = DESKTOP_WIDTH;
   } else if (isUltrawide) {

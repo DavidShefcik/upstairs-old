@@ -24,6 +24,8 @@ export default class ErrorBoundary extends Component<Props, State> {
     return { hasError: true };
   }
 
+  // TODO: Logging service with componentDidCatch when not running locally
+
   render() {
     if (this.state.hasError) {
       return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Stack, VStack } from "@chakra-ui/react";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 
-import SettingsSection from "~/layout/pages/settings/SettingsSection";
+import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
 import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
 import useDeviceSize from "~/hooks/useDeviceSize";
 import { useSessionContext } from "~/context/Session";
@@ -73,7 +73,9 @@ export default function UpdateDetails() {
     const { networkError, graphQLErrors } = error;
 
     if (networkError) {
-      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+      setAllErrors(
+        humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+      );
     } else {
       graphQLErrors.forEach(({ message }) => {
         switch (message) {
@@ -81,7 +83,9 @@ export default function UpdateDetails() {
             setAllErrors(humanReadableErrorMessages[message]);
             break;
           default:
-            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+            setAllErrors(
+              humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+            );
         }
       });
     }
@@ -106,7 +110,7 @@ export default function UpdateDetails() {
   };
 
   return (
-    <SettingsSection<UpdateAddressFields, UpdateAddressResponse>
+    <FormSettingsSection<UpdateAddressFields, UpdateAddressResponse>
       {...{ isSubmitting, setIsSubmitting }}
       title="Update address"
       showButtons
@@ -180,7 +184,7 @@ export default function UpdateDetails() {
           {/* State address */}
           <FormInput<State>
             id="state"
-            name="stateAddress"
+            name="state"
             label="State"
             inputType={INPUT_TYPE.SELECT}
             options={STATES}
@@ -200,13 +204,14 @@ export default function UpdateDetails() {
             error={zipCodeAddressError}
           >
             <ZipCodeInput
+              id="zipCodeAddress"
               value={zipCodeAddress}
-              onChange={setZipCodeAddress}
+              onChange={(val) => setZipCodeAddress(val)}
               isDisabled={isSubmitting}
             />
           </FormInput>
         </Stack>
       </VStack>
-    </SettingsSection>
+    </FormSettingsSection>
   );
 }

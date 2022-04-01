@@ -1,21 +1,14 @@
-import { Text } from "@chakra-ui/react";
-
 import SettingsContent from "~/layout/pages/settings/SettingsContent";
-import SettingsSection from "~/layout/pages/settings/SettingsSection";
+import ChangePassword from "~/layout/pages/settings/security/ChangePassword";
+import ManageTwoFactorAuthentication from "~/layout/pages/settings/security/ManageTwoFactorAuthentication";
+import SessionManagement from "~/layout/pages/settings/security/SessionManagement";
 
 export default function SecuritySettings() {
   return (
     <SettingsContent title="Security Settings">
-      {/* <SettingsSection title="Update account security"> */}
-      {/* Change password */}
-      {/* Enable/Disable 2fa */}
-      {/* 
-          TODO: Logout all other sessions. We'll need to implement
-          refresh tokens on the backend. The access tokens
-          need to have a short life (15 minutes)
-         */}
-      <Text>TODO</Text>
-      {/* </SettingsSection> */}
+      <ChangePassword />
+      <ManageTwoFactorAuthentication />
+      <SessionManagement />
     </SettingsContent>
   );
 }

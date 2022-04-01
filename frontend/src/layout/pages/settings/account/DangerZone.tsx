@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Button } from "@chakra-ui/react";
 
-import SettingsSection from "~/layout/pages/settings/SettingsSection";
+import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
 import { useSessionContext } from "~/context/Session";
 
 const DELETE_ACCOUNT_MUTATION = gql`
@@ -35,9 +35,10 @@ export default function UpdateEmail() {
   }, [deleteAccountLoading]);
 
   return (
-    <SettingsSection<{}, DeleteAccountResponse>
+    <FormSettingsSection<{}, DeleteAccountResponse>
       {...{ isSubmitting, setIsSubmitting }}
       title="Danger Zone"
+      titleHoverText="Highway to the"
       titleColor="red.500"
       data={{}}
       fields={{}}
@@ -45,10 +46,12 @@ export default function UpdateEmail() {
       onError={() => {}}
       onCancel={() => {}}
       mutation={DELETE_ACCOUNT_MUTATION}
+      mx="4"
+      pb="4"
     >
       <Button type="submit" isLoading={deleteAccountLoading} colorScheme="red">
         Delete Account
       </Button>
-    </SettingsSection>
+    </FormSettingsSection>
   );
 }

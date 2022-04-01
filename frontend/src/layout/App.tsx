@@ -9,6 +9,7 @@ import GlobalProvider from "~/context/GlobalProvider";
 import ModalManager from "./modals/ModalManager";
 
 import "~/assets/global.css";
+import { Suspense } from "react";
 
 const client = new ApolloClient({
   uri: `${__API_URL__}/graphql`,

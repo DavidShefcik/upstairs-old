@@ -78,7 +78,9 @@ export default function Register() {
     const { networkError, graphQLErrors } = error;
 
     if (networkError) {
-      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+      setAllErrors(
+        humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+      );
     } else {
       graphQLErrors.forEach(({ message }) => {
         switch (message) {
@@ -87,7 +89,9 @@ export default function Register() {
             setEmailError(humanReadableErrorMessages[message]);
             break;
           default:
-            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+            setAllErrors(
+              humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+            );
         }
       });
     }

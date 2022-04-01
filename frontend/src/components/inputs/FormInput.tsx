@@ -1,27 +1,35 @@
 import {
+  Box,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   InputProps,
   SelectProps,
+  SwitchProps,
 } from "@chakra-ui/react";
 import { ReactChild } from "react";
 import invariant from "invariant";
+import _omit from "lodash.omit";
 
 import StyledInput from "./StyledInput";
-import StyledSelect from "./StyledSelect";
+import StyledSelect from "./StyledSelectInput";
 import StyledPinInput, { StyledPinInputProps } from "./StyledPinInput";
+import StyledSwitch from "./StyledSwitchInput";
 
 export enum INPUT_TYPE {
   TEXT,
   SELECT,
   PIN,
+  TOGGLE,
   CUSTOM,
 }
 
-interface ControlledInput {
-  value: string;
-  onChange(value: string): void;
+const INLINE_INPUT_TYPES: INPUT_TYPE[] = [INPUT_TYPE.TOGGLE];
+
+interface ControlledInput<T extends string | boolean = string> {
+  value: T;
+  onChange(value: T): void;
 }
 
 type Props<T> = {
@@ -44,19 +52,23 @@ type Props<T> = {
       inputType: INPUT_TYPE.SELECT;
       options: T[];
       uniqueKey: keyof T;
-    } & Omit<SelectProps, "value" | "onChange"> &
+    } & Omit<InputProps, "value" | "onChange"> &
       ControlledInput)
   | ({
       inputType: INPUT_TYPE.PIN;
     } & Omit<StyledPinInputProps, "value" | "onChange"> &
       ControlledInput)
+  | ({
+      inputType: INPUT_TYPE.TOGGLE;
+    } & Omit<SwitchProps, "checked" | "value" | "onChange"> &
+      ControlledInput<boolean>)
   | {
       inputType: INPUT_TYPE.CUSTOM;
       children: ReactChild;
     }
 );
 
-export default function FormInput<T extends Record<string, string>>(
+export default function FormInput<T extends Record<string, string> = {}>(
   props: Props<T>
 ) {
   const { id, label, error, disabled, inputType } = props;
@@ -80,6 +92,7 @@ export default function FormInput<T extends Record<string, string>>(
         <StyledSelect
           value={props.value}
           onChange={(event) => props.onChange(event.target.value)}
+          id={props.id}
         >
           <option value=""></option>
           {props.options.map((item: T) => (
@@ -90,6 +103,26 @@ export default function FormInput<T extends Record<string, string>>(
         </StyledSelect>
       );
       break;
+    case INPUT_TYPE.TOGGLE:
+      /**
+       * We have to remove the value prop due to our ControlledInput
+       * value type interfering with the value prop on the chakra
+       * Switch component
+       */
+      const propsWithoutValueHandling = _omit(props, [
+        "value",
+        "onChange",
+        "inputType",
+      ]);
+
+      component = (
+        <StyledSwitch
+          {...propsWithoutValueHandling}
+          isChecked={props.value}
+          onChange={(event) => props.onChange(event.target.checked)}
+        />
+      );
+      break;
     case INPUT_TYPE.PIN:
       component = <StyledPinInput {...props} />;
       break;
@@ -97,13 +130,28 @@ export default function FormInput<T extends Record<string, string>>(
       component = props.children;
       break;
     default:
-      invariant(false, "FormInput is not of type TEXT, SELECT, or CUSTOM!");
+      invariant(
+        false,
+        "FormInput is not of type TEXT, SELECT, PIN, SWITCH, or CUSTOM!"
+      );
   }
 
   return (
     <FormControl label={label} isInvalid={!!error} isDisabled={disabled}>
-      <FormLabel htmlFor={id}>{label}</FormLabel>
-      {component}
+      <Flex
+        flex={1}
+        flexDirection={
+          INLINE_INPUT_TYPES.includes(inputType) ? "row" : "column"
+        }
+        justifyContent={
+          INLINE_INPUT_TYPES.includes(inputType) ? "space-between" : "center"
+        }
+      >
+        <FormLabel htmlFor={id} flex={1}>
+          {label}
+        </FormLabel>
+        <Box>{component}</Box>
+      </Flex>
       {error && <FormErrorMessage>{error}</FormErrorMessage>}
     </FormControl>
   );

@@ -7,7 +7,7 @@ import { INPUT_SETTINGS } from "~/constants/inputs";
 
 type Props = Omit<InputProps, "value" | "onChange"> & {
   value: string;
-  onChange: Dispatch<SetStateAction<string>>;
+  onChange(value: string): void;
 };
 
 export default function ZipCodeInput(props: Props) {

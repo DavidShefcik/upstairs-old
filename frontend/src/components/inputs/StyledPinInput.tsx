@@ -11,8 +11,8 @@ export default function StyledPinInput(props: StyledPinInputProps) {
 
   return (
     <PinInput {...props}>
-      {new Array(valueLength).map((val) => (
-        <PinInputField key={val} {...INPUT_STYLING} />
+      {Array.from(Array(valueLength)).map((_, index) => (
+        <PinInputField key={`pin-${index}`} {...INPUT_STYLING} />
       ))}
     </PinInput>
   );

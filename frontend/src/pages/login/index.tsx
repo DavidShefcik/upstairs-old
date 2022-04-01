@@ -61,7 +61,9 @@ export default function Login() {
     const { networkError, graphQLErrors } = error;
 
     if (networkError) {
-      setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+      setAllErrors(
+        humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+      );
     } else {
       graphQLErrors.forEach(({ message }) => {
         switch (message) {
@@ -73,7 +75,9 @@ export default function Login() {
             setPasswordError(humanReadableErrorMessages[message]);
             break;
           default:
-            setAllErrors(humanReadableErrorMessages["internal-server-error"]);
+            setAllErrors(
+              humanReadableErrorMessages[ErrorMessages.INTERNAL_SERVER_ERROR]
+            );
         }
       });
     }

@@ -1,20 +1,6 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import {
-  Flex,
-  VStack,
-  Text,
-  Button,
-  InputProps,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Link as ChakraLink,
-  PinInput,
-  PinInputField,
-  HStack,
-  PinInputProps,
-} from "@chakra-ui/react";
+import { Flex, VStack, Text, Link as ChakraLink } from "@chakra-ui/react";
 import _omit from "lodash.omit";
 
 import useDeviceSize from "~/hooks/useDeviceSize";

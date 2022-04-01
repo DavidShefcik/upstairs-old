@@ -33,7 +33,7 @@ export interface FormProps<T, R> {
  * the response when the mutation is successful
  */
 export default function Form<
-  T extends { [K in keyof T]: string },
+  T extends { [K in keyof T]: string | boolean },
   R = undefined
 >({
   submitButtonText = "Submit",
@@ -66,7 +66,7 @@ export default function Form<
       const { fieldName, isRequired } = fields[field];
       const value = data[field];
 
-      if (isRequired && !isValidString(value)) {
+      if (isRequired && typeof value === "string" && !isValidString(value)) {
         errors[field] = `${fieldName} is required!`;
       }
     }
