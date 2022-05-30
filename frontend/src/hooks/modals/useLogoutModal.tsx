@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import NiceModal from "@ebay/nice-modal-react";
+import { useApolloClient } from "@apollo/client";
 
 import ConfirmModal, { IConfirmResult } from "~/layout/modals/ConfirmModal";
 import { useSessionContext } from "~/context/Session";
@@ -11,11 +12,14 @@ interface ReturnType {
 export default function useLogoutModal(): ReturnType {
   const navigate = useNavigate();
   const { logout } = useSessionContext();
+  const client = useApolloClient();
 
   const handleLogout = async (): Promise<IConfirmResult> => {
     const result = await logout();
 
     if (result) {
+      await client.clearStore();
+
       return {
         success: true,
       };
