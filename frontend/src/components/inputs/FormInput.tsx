@@ -68,6 +68,8 @@ type Props<T> = {
     }
 );
 
+const OMITTED_INPUT_PROPS = ["inputType", "uniqueKey"];
+
 export default function FormInput<T extends Record<string, string> = {}>(
   props: Props<T>
 ) {
@@ -79,7 +81,7 @@ export default function FormInput<T extends Record<string, string> = {}>(
     case InputType.TEXT:
       component = (
         <StyledInput
-          {...props}
+          {..._omit(props, OMITTED_INPUT_PROPS)}
           id={id}
           type={props.type}
           maxLength={props.maxLength}
@@ -91,7 +93,7 @@ export default function FormInput<T extends Record<string, string> = {}>(
     case InputType.SELECT:
       component = (
         <StyledSelect
-          {...props}
+          {..._omit(props, OMITTED_INPUT_PROPS)}
           value={props.value}
           onChange={(event) => props.onChange(event.target.value)}
           id={props.id}
