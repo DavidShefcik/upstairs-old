@@ -1,12 +1,6 @@
-import {
-  Resolver,
-  Args,
-  Mutation,
-  Context,
-  GraphQLExecutionContext,
-} from '@nestjs/graphql';
+import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { z } from 'zod';
-import { CookieOptions } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 import { DateTime } from 'luxon';
 
 import { Public } from '~/decorators/Public';
@@ -22,7 +16,8 @@ import {
   MAXIMUM_PASSWORD_LENGTH,
 } from '~/constants/maxStringLengths';
 import { isValidString } from '~/utils/strings';
-import { GraphQLContext } from '~/types/utils';
+import { RequestContext } from '~/decorators/RequestContext';
+import { ResponseContext } from '~/decorators/ResponseContext';
 
 const COOKIE_SETTINGS: CookieOptions = {
   httpOnly: true,
@@ -63,7 +58,7 @@ export class AuthResolver {
   async login(
     @Args('email') email: string,
     @Args('password') password: string,
-    @Context() context: GraphQLExecutionContext,
+    @ResponseContext() res: Response,
   ): Promise<LoginResponse> {
     // Validate data
     const emailIsValid = this.emailSchema.safeParse(email).success;
@@ -78,8 +73,6 @@ export class AuthResolver {
     });
 
     const { token, needToVerify } = loginResult;
-
-    const { res } = context.getContext<GraphQLContext>();
 
     if (token) {
       res.cookie('token', token, COOKIE_SETTINGS);
@@ -105,7 +98,7 @@ export class AuthResolver {
     @Args('password') password: string,
     @Args('firstName') firstName: string,
     @Args('lastName') lastName: string,
-    @Context() context: GraphQLExecutionContext,
+    @ResponseContext() res: Response,
   ): Promise<LoginResponse> {
     // Validate data
     const emailIsValid = this.emailSchema.safeParse(email).success;
@@ -129,8 +122,6 @@ export class AuthResolver {
       firstName,
       lastName,
     });
-
-    const { res } = context.getContext<GraphQLContext>();
 
     const { token } = registerResult;
 
@@ -156,10 +147,9 @@ export class AuthResolver {
   @Mutation()
   @RequireAuth()
   async logout(
-    @Context() context: GraphQLExecutionContext,
+    @RequestContext() req: Request,
+    @ResponseContext() res: Response,
   ): Promise<SuccessResponse> {
-    const { req, res } = context.getContext<GraphQLContext>();
-
     const token = this.jwtService.extractTokenFromRequest(req);
 
     if (!token) {
@@ -173,6 +163,19 @@ export class AuthResolver {
 
     return {
       success: tokenRevoked,
+    };
+  }
+
+  @Mutation()
+  async refreshAccessToken(
+    @ResponseContext() res: Response,
+  ): Promise<SuccessResponse> {
+    const newAccessToken = '';
+
+    res.cookie('token', newAccessToken, COOKIE_SETTINGS);
+
+    return {
+      success: true,
     };
   }
 }

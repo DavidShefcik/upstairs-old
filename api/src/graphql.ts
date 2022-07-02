@@ -8,12 +8,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface IMutation {
-    login(email: string, password: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
-    verifyLogin(email: string, password: string, code: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
-    register(email: string, password: string, firstName: string, lastName: string): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
-    requestPasswordReset(email: string): Nullable<RequestPasswordResetResponse> | Promise<Nullable<RequestPasswordResetResponse>>;
-    resetPassword(code: string, password: string): Nullable<SuccessResponse> | Promise<Nullable<SuccessResponse>>;
-    logout(): Nullable<SuccessResponse> | Promise<Nullable<SuccessResponse>>;
+    login(email: string, password: string): LoginResponse | Promise<LoginResponse>;
+    verifyLogin(email: string, password: string, code: string): LoginResponse | Promise<LoginResponse>;
+    register(email: string, password: string, firstName: string, lastName: string): TokenResponse | Promise<TokenResponse>;
+    requestPasswordReset(email: string): SuccessResponse | Promise<SuccessResponse>;
+    resetPassword(code: string, password: string): SuccessResponse | Promise<SuccessResponse>;
+    logout(): SuccessResponse | Promise<SuccessResponse>;
+    refreshAccessToken(): TokenResponse | Promise<TokenResponse>;
     createName(name: string): Name | Promise<Name>;
 }
 
@@ -24,12 +25,12 @@ export interface LoginResponse {
     user?: Nullable<User>;
 }
 
-export interface RequestPasswordResetResponse {
-    email: string;
-}
-
 export interface SuccessResponse {
     success: boolean;
+}
+
+export interface TokenResponse {
+    token: boolean;
 }
 
 export interface User {

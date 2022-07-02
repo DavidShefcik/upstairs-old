@@ -4,12 +4,7 @@ import _omit from 'lodash.omit';
 
 import { JwtService } from '~/modules/utils/jwt';
 
-import {
-  LoginResponse,
-  RequestPasswordResetResponse,
-  SuccessResponse,
-  User as GraphQLUser,
-} from '~/graphql';
+import { LoginResponse, User as GraphQLUser } from '~/graphql';
 import { PrismaService } from '~/modules/utils/prisma';
 import {
   UserNotFoundError,

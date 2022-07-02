@@ -1,15 +1,16 @@
 type Mutation {
-  login(email: String!, password: String!): LoginResponse
-  verifyLogin(email: String!, password: String!, code: String!): LoginResponse
+  login(email: String!, password: String!): LoginResponse!
+  verifyLogin(email: String!, password: String!, code: String!): LoginResponse!
   register(
     email: String!
     password: String!
     firstName: String!
     lastName: String!
-  ): LoginResponse
-  requestPasswordReset(email: String!): RequestPasswordResetResponse
-  resetPassword(code: String!, password: String!): SuccessResponse
-  logout: SuccessResponse
+  ): TokenResponse!
+  requestPasswordReset(email: String!): SuccessResponse!
+  resetPassword(code: String!, password: String!): SuccessResponse!
+  logout: SuccessResponse!
+  refreshAccessToken: TokenResponse!
 }
 
 type LoginResponse {
@@ -18,11 +19,11 @@ type LoginResponse {
   token: String
   user: User
 }
-type RequestPasswordResetResponse {
-  email: String!
-}
 type SuccessResponse {
   success: Boolean!
+}
+type TokenResponse {
+  token: Boolean!
 }
 type User {
   id: String!
