@@ -4,7 +4,7 @@ import { gql } from "@apollo/client";
 import BaseAuthentication from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import Form from "~/components/inputs/Form";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 
 const RESET_PASSWORD_MUTATION = gql`
   mutation ResetPasswordMutation($code: String!, $password: String!) {
@@ -65,7 +65,7 @@ export default function ResetPassword() {
         setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           label="Password"
           id="password"
@@ -80,7 +80,7 @@ export default function ResetPassword() {
           autoFocus
         />
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           label="Confirm Password"
           id="confirmPassword"

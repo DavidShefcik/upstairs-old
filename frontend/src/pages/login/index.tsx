@@ -9,7 +9,7 @@ import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
 import { useSessionContext } from "~/context/Session";
 import Form from "~/components/inputs/Form";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 
 const LOGIN_MUTATION = gql`
   ${CURRENT_USER_FRAGMENT}
@@ -117,7 +117,7 @@ export default function Login() {
         setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="email"
           label="Email Address"
           id="email"
@@ -132,7 +132,7 @@ export default function Login() {
           isRequired
         />
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           label="Password"
           id="password"

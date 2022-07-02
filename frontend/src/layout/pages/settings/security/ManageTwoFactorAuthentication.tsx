@@ -4,7 +4,7 @@ import { ApolloError, gql } from "@apollo/client";
 
 import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
 import { useSessionContext } from "~/context/Session";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 
 const UPDATE_ACCOUNT_MUTATION = gql`
@@ -82,7 +82,7 @@ export default function ManageTwoFactorAuthentication() {
           id="twoFactorEnabled"
           name="twoFactorEnabled"
           label="Two Factor Authentication Enabled"
-          inputType={INPUT_TYPE.TOGGLE}
+          inputType={InputType.TOGGLE}
           value={twoFactorEnabled}
           onChange={(val) => setTwoFactorEnabled(val)}
           disabled={isSubmitting}

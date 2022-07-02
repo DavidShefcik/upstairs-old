@@ -4,7 +4,7 @@ import { gql } from "@apollo/client";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { forgotPasswordFormLinks } from "~/constants/links";
 import Form from "~/components/inputs/Form";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 import BaseAuthentication from "~/layout/BaseAuthentication";
 
 const REQUEST_PASSWORD_RESET_MUTATION = gql`
@@ -60,7 +60,7 @@ export default function ForgotPassword() {
         setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="email"
           label="Email Address"
           id="email"

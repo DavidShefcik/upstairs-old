@@ -5,7 +5,7 @@ import BaseAuthentication from "~/layout/BaseAuthentication";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { verifyLoginFormLinks } from "~/constants/links";
 import Form from "~/components/inputs/Form";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 
 const VERIFY_LOGIN_MUTATION = gql`
   mutation VerifyLoginMutation($code: String!) {
@@ -57,7 +57,7 @@ export default function VerifyLogin() {
         setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
-          inputType={INPUT_TYPE.PIN}
+          inputType={InputType.PIN}
           label="Authenticator Code"
           id="code"
           name="code"

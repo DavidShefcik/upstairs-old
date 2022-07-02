@@ -1,4 +1,4 @@
-export enum INPUT {
+export enum Input {
   EMAIL = "email",
   PASSWORD = "password",
   NAME = "name",
@@ -11,7 +11,7 @@ interface InputSettings {
   maxLength: number;
 }
 
-export const INPUT_SETTINGS: Record<INPUT, InputSettings> = {
+export const INPUT_SETTINGS: Record<Input, InputSettings> = {
   email: {
     maxLength: 128,
   },

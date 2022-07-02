@@ -5,7 +5,7 @@ import { ApolloError, gql } from "@apollo/client";
 import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { useSessionContext } from "~/context/Session";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 
 const UPDATE_ACCOUNT_MUTATION = gql`
@@ -105,7 +105,7 @@ export default function UpdateEmail() {
           id="email"
           name="email"
           label="Email Address"
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="email"
           maxLength={INPUT_SETTINGS.email.maxLength}
           value={email}
@@ -118,7 +118,7 @@ export default function UpdateEmail() {
           id="confirmEmail"
           name="confirmEmail"
           label="Confirm Email Address"
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="email"
           maxLength={INPUT_SETTINGS.email.maxLength}
           value={confirmEmail}

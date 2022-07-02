@@ -10,7 +10,7 @@ import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
 import { useSessionContext } from "~/context/Session";
 import Form from "~/components/inputs/Form";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 
 const REGISTER_MUTATION = gql`
   ${CURRENT_USER_FRAGMENT}
@@ -168,7 +168,7 @@ export default function Register() {
         setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="text"
           label="First Name"
           id="firstName"
@@ -183,7 +183,7 @@ export default function Register() {
           isRequired
         />
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="text"
           label="Last Name"
           id="lastName"
@@ -197,7 +197,7 @@ export default function Register() {
           isRequired
         />
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="email"
           label="Email Address"
           id="email"
@@ -211,7 +211,7 @@ export default function Register() {
           isRequired
         />
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           label="Password"
           id="password"
@@ -225,7 +225,7 @@ export default function Register() {
           isRequired
         />
         <FormInput
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           label="Confirm Password"
           id="confirmPassword"

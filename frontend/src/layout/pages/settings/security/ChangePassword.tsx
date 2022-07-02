@@ -5,7 +5,7 @@ import { ApolloError, gql } from "@apollo/client";
 import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { useSessionContext } from "~/context/Session";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 import { ErrorMessages, humanReadableErrorMessages } from "~/constants/errors";
 
 const UPDATE_ACCOUNT_MUTATION = gql`
@@ -134,7 +134,7 @@ export default function ChangePassword() {
           id="password"
           name="password"
           label="Current Password"
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           autoComplete="current-password"
           maxLength={INPUT_SETTINGS.password.maxLength}
@@ -148,7 +148,7 @@ export default function ChangePassword() {
           id="newPassword"
           name="newPassword"
           label="New Password"
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           autoComplete="new-password"
           maxLength={INPUT_SETTINGS.password.maxLength}
@@ -162,7 +162,7 @@ export default function ChangePassword() {
           id="confirmNewPassword"
           name="confirmNewPassword"
           label="Confirm New Password"
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           type="password"
           autoComplete="new-password"
           maxLength={INPUT_SETTINGS.password.maxLength}

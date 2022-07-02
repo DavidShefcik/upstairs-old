@@ -17,7 +17,7 @@ import StyledSelect from "./StyledSelectInput";
 import StyledPinInput, { StyledPinInputProps } from "./StyledPinInput";
 import StyledSwitch from "./StyledSwitchInput";
 
-export enum INPUT_TYPE {
+export enum InputType {
   TEXT,
   SELECT,
   PIN,
@@ -25,7 +25,7 @@ export enum INPUT_TYPE {
   CUSTOM,
 }
 
-const INLINE_INPUT_TYPES: INPUT_TYPE[] = [INPUT_TYPE.TOGGLE];
+const INLINE_INPUT_TYPES: InputType[] = [InputType.TOGGLE];
 
 interface ControlledInput<T extends string | boolean = string> {
   value: T;
@@ -44,26 +44,26 @@ type Props<T> = {
   name: string;
 } & (
   | ({
-      inputType: INPUT_TYPE.TEXT;
+      inputType: InputType.TEXT;
       maxLength: number;
     } & Omit<InputProps, "value" | "onChange"> &
       ControlledInput)
   | ({
-      inputType: INPUT_TYPE.SELECT;
+      inputType: InputType.SELECT;
       options: T[];
       uniqueKey: keyof T;
     } & Omit<SelectProps, "value" | "onChange"> &
       ControlledInput)
   | ({
-      inputType: INPUT_TYPE.PIN;
+      inputType: InputType.PIN;
     } & Omit<StyledPinInputProps, "value" | "onChange"> &
       ControlledInput)
   | ({
-      inputType: INPUT_TYPE.TOGGLE;
+      inputType: InputType.TOGGLE;
     } & Omit<SwitchProps, "checked" | "value" | "onChange"> &
       ControlledInput<boolean>)
   | {
-      inputType: INPUT_TYPE.CUSTOM;
+      inputType: InputType.CUSTOM;
       children: ReactNode;
     }
 );
@@ -76,7 +76,7 @@ export default function FormInput<T extends Record<string, string> = {}>(
   let component = null;
 
   switch (inputType) {
-    case INPUT_TYPE.TEXT:
+    case InputType.TEXT:
       component = (
         <StyledInput
           {...props}
@@ -88,7 +88,7 @@ export default function FormInput<T extends Record<string, string> = {}>(
         />
       );
       break;
-    case INPUT_TYPE.SELECT:
+    case InputType.SELECT:
       component = (
         <StyledSelect
           {...props}
@@ -105,7 +105,7 @@ export default function FormInput<T extends Record<string, string> = {}>(
         </StyledSelect>
       );
       break;
-    case INPUT_TYPE.TOGGLE:
+    case InputType.TOGGLE:
       /**
        * We have to remove the value prop due to our ControlledInput
        * value type interfering with the value prop on the chakra
@@ -125,10 +125,10 @@ export default function FormInput<T extends Record<string, string> = {}>(
         />
       );
       break;
-    case INPUT_TYPE.PIN:
+    case InputType.PIN:
       component = <StyledPinInput {...props} />;
       break;
-    case INPUT_TYPE.CUSTOM:
+    case InputType.CUSTOM:
       component = props.children;
       break;
     default:

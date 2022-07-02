@@ -6,7 +6,7 @@ import FormSettingsSection from "~/layout/pages/settings/FormSettingsSection";
 import { CURRENT_USER_FRAGMENT } from "~/fragments/user";
 import useDeviceSize from "~/hooks/useDeviceSize";
 import { useSessionContext } from "~/context/Session";
-import FormInput, { INPUT_TYPE } from "~/components/inputs/FormInput";
+import FormInput, { InputType } from "~/components/inputs/FormInput";
 import { INPUT_SETTINGS } from "~/constants/inputs";
 import { State, STATES } from "~/constants/states";
 import ZipCodeInput from "~/components/inputs/ZipCodeInput";
@@ -156,7 +156,7 @@ export default function UpdateDetails() {
           id="streetAddress"
           name="streetAddress"
           label="Street Address"
-          inputType={INPUT_TYPE.TEXT}
+          inputType={InputType.TEXT}
           maxLength={INPUT_SETTINGS.street_address.maxLength}
           value={streetAddress}
           onChange={(val) => setStreetAddress(val)}
@@ -174,7 +174,7 @@ export default function UpdateDetails() {
             id="cityAddress"
             name="cityAddress"
             label="City"
-            inputType={INPUT_TYPE.TEXT}
+            inputType={InputType.TEXT}
             maxLength={INPUT_SETTINGS.city_address.maxLength}
             value={cityAddress}
             onChange={(val) => setCityAddress(val)}
@@ -186,7 +186,7 @@ export default function UpdateDetails() {
             id="state"
             name="state"
             label="State"
-            inputType={INPUT_TYPE.SELECT}
+            inputType={InputType.SELECT}
             options={STATES}
             uniqueKey="abbreviation"
             value={stateAddress}
@@ -199,7 +199,7 @@ export default function UpdateDetails() {
             id="zipCodeAddress"
             name="zipCodeAddress"
             label="Zip Code"
-            inputType={INPUT_TYPE.CUSTOM}
+            inputType={InputType.CUSTOM}
             disabled={isSubmitting}
             error={zipCodeAddressError}
           >
