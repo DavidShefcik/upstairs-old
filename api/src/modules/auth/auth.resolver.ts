@@ -11,14 +11,9 @@ import { DateTime } from 'luxon';
 
 import { Public } from '~/decorators/Public';
 import { RequireAuth } from '~/decorators/RequireAuth';
-import {
-  LoginResponse,
-  RequestPasswordResetResponse,
-  SuccessResponse,
-} from '~/graphql';
+import { LoginResponse, SuccessResponse } from '~/graphql';
 import { AuthService } from './auth.service';
 import { JwtService } from '~/modules/utils/jwt';
-import { PrismaService } from '~/modules/utils/prisma';
 import { UnauthorizedError } from '~/exceptions/general';
 import { InvalidEmail, InvalidName, InvalidPassword } from '~/exceptions/auth';
 import {
@@ -27,6 +22,7 @@ import {
   MAXIMUM_PASSWORD_LENGTH,
 } from '~/constants/maxStringLengths';
 import { isValidString } from '~/utils/strings';
+import { GraphQLContext } from '~/types/utils';
 
 const COOKIE_SETTINGS: CookieOptions = {
   httpOnly: true,
@@ -44,7 +40,6 @@ export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
-    private readonly prismaService: PrismaService,
   ) {}
 
   private readonly emailSchema = z
@@ -84,9 +79,10 @@ export class AuthResolver {
 
     const { token, needToVerify } = loginResult;
 
+    const { res } = context.getContext<GraphQLContext>();
+
     if (token) {
-      // @ts-ignore
-      context.res.cookie('token', token, COOKIE_SETTINGS);
+      res.cookie('token', token, COOKIE_SETTINGS);
 
       return {
         success: true,
@@ -134,10 +130,11 @@ export class AuthResolver {
       lastName,
     });
 
+    const { res } = context.getContext<GraphQLContext>();
+
     const { token } = registerResult;
 
-    // @ts-ignore
-    context.res.cookie('token', token, COOKIE_SETTINGS);
+    res.cookie('token', token, COOKIE_SETTINGS);
 
     return {
       ...registerResult,
@@ -161,8 +158,9 @@ export class AuthResolver {
   async logout(
     @Context() context: GraphQLExecutionContext,
   ): Promise<SuccessResponse> {
-    // @ts-ignore
-    const token = this.jwtService.extractTokenFromRequest(context.req);
+    const { req, res } = context.getContext<GraphQLContext>();
+
+    const token = this.jwtService.extractTokenFromRequest(req);
 
     if (!token) {
       throw new UnauthorizedError();
@@ -171,8 +169,7 @@ export class AuthResolver {
     const tokenRevoked = await this.jwtService.revokeJWT(token);
 
     // Remove JWT cookie from frontend client
-    // @ts-ignore
-    context.res.clearCookie('token');
+    res.clearCookie('token');
 
     return {
       success: tokenRevoked,
