@@ -123,7 +123,7 @@ export default function Register() {
   return (
     <BaseAuthentication links={registerFormLinks} title="Register">
       <Form<RegisterFields, RegisterResponse>
-        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        {...{ isSubmitting, onSuccess }}
         submitButtonText="Register"
         showSubmitButton
         data={{
@@ -135,11 +135,11 @@ export default function Register() {
         }}
         mutation={REGISTER_MUTATION}
         setErrors={{
-          firstName: setFirstNameError,
-          lastName: setLastNameError,
-          email: setEmailError,
-          password: setPasswordError,
-          confirmPassword: setConfirmPasswordError,
+          firstName: (error) => setFirstNameError(error),
+          lastName: (error) => setLastNameError(error),
+          email: (error) => setEmailError(error),
+          password: (error) => setPasswordError(error),
+          confirmPassword: (error) => setConfirmPasswordError(error),
         }}
         fields={{
           firstName: {
@@ -165,6 +165,7 @@ export default function Register() {
         }}
         onError={onError}
         customValidation={customValidation}
+        setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
           inputType={INPUT_TYPE.TEXT}

@@ -91,7 +91,7 @@ export default function Login() {
   return (
     <BaseAuthentication title="Login" links={loginFormLinks}>
       <Form<LoginFields, LoginResponse>
-        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        {...{ isSubmitting, onSuccess }}
         submitButtonText="Login"
         showSubmitButton
         data={{
@@ -100,8 +100,8 @@ export default function Login() {
         }}
         mutation={LOGIN_MUTATION}
         setErrors={{
-          email: setEmailError,
-          password: setPasswordError,
+          email: (error) => setEmailError(error),
+          password: (error) => setPasswordError(error),
         }}
         fields={{
           email: {
@@ -114,6 +114,7 @@ export default function Login() {
           },
         }}
         onError={onError}
+        setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
           inputType={INPUT_TYPE.TEXT}

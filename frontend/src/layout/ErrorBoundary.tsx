@@ -1,11 +1,11 @@
-import { ReactChild, Component } from "react";
+import { ReactNode, Component } from "react";
 import { Flex } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
 
 import ErrorPage from "./ErrorPage";
 
 interface Props {
-  children: ReactChild;
+  children: ReactNode;
 }
 interface State {
   hasError: boolean;

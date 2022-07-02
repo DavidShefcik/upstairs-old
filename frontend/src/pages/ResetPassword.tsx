@@ -39,7 +39,7 @@ export default function ResetPassword() {
   return (
     <BaseAuthentication title="Reset Password">
       <Form<ResetPasswordFields, ResetPasswordResponse>
-        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        {...{ isSubmitting, onSuccess }}
         submitButtonText="Reset Password"
         showSubmitButton
         data={{
@@ -48,8 +48,8 @@ export default function ResetPassword() {
         }}
         mutation={RESET_PASSWORD_MUTATION}
         setErrors={{
-          password: setPasswordError,
-          confirmPassword: setConfirmPasswordError,
+          password: (error) => setPasswordError(error),
+          confirmPassword: (error) => setConfirmPasswordError(error),
         }}
         fields={{
           password: {
@@ -62,6 +62,7 @@ export default function ResetPassword() {
           },
         }}
         onError={(error) => console.log("error")}
+        setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
           inputType={INPUT_TYPE.TEXT}

@@ -5,7 +5,7 @@ import _omit from "lodash.omit";
 
 import { isValidString } from "~/utils/strings";
 
-type FormErrors<T> = Record<keyof Partial<T>, Dispatch<SetStateAction<string>>>;
+type FormErrors<T> = Record<keyof Partial<T>, (error: string) => void>;
 interface FormField {
   fieldName: string;
   isRequired: boolean;
@@ -19,7 +19,7 @@ export interface FormProps<T, R> {
   mutation: DocumentNode;
   setErrors: FormErrors<T>;
   isSubmitting?: boolean;
-  setIsSubmitting?: Dispatch<SetStateAction<boolean>>;
+  setIsSubmitting?(value: boolean): void;
   onError(error: ApolloError): void;
   customValidation?(): boolean;
   onSuccess?(data: R): void;
@@ -50,7 +50,7 @@ export default function Form<
   extraMutationVariables,
   showSubmitButton,
 }: FormProps<T, R>) {
-  const [sendData, { loading }] = useMutation(mutation);
+  const [sendData, { loading, error }] = useMutation(mutation);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -99,18 +99,16 @@ export default function Form<
         ...extraMutationVariables,
       },
       onCompleted: (data: R) => {
-        setIsSubmitting && setIsSubmitting(false);
-
         if (onSuccess) {
           onSuccess(data);
         }
       },
       onError: (error) => {
-        setIsSubmitting && setIsSubmitting(false);
-
         onError(error);
       },
     });
+
+    setIsSubmitting && setIsSubmitting(false);
   };
 
   const setAllErrors = (errorMessage: string) => {

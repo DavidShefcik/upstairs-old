@@ -40,7 +40,7 @@ export default function ForgotPassword() {
       links={forgotPasswordFormLinks}
     >
       <Form<ForgotPasswordFields, ForgotPasswordResponse>
-        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        {...{ isSubmitting, onSuccess }}
         submitButtonText="Request Password Reset"
         showSubmitButton
         data={{
@@ -48,7 +48,7 @@ export default function ForgotPassword() {
         }}
         mutation={REQUEST_PASSWORD_RESET_MUTATION}
         setErrors={{
-          email: setEmailError,
+          email: (error) => setEmailError(error),
         }}
         fields={{
           email: {
@@ -57,6 +57,7 @@ export default function ForgotPassword() {
           },
         }}
         onError={(error) => console.log("error")}
+        setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
           inputType={INPUT_TYPE.TEXT}

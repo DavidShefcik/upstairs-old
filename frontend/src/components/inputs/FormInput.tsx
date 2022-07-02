@@ -8,7 +8,7 @@ import {
   SelectProps,
   SwitchProps,
 } from "@chakra-ui/react";
-import { ReactChild } from "react";
+import { ReactNode } from "react";
 import invariant from "invariant";
 import _omit from "lodash.omit";
 
@@ -52,7 +52,7 @@ type Props<T> = {
       inputType: INPUT_TYPE.SELECT;
       options: T[];
       uniqueKey: keyof T;
-    } & Omit<InputProps, "value" | "onChange"> &
+    } & Omit<SelectProps, "value" | "onChange"> &
       ControlledInput)
   | ({
       inputType: INPUT_TYPE.PIN;
@@ -64,7 +64,7 @@ type Props<T> = {
       ControlledInput<boolean>)
   | {
       inputType: INPUT_TYPE.CUSTOM;
-      children: ReactChild;
+      children: ReactNode;
     }
 );
 
@@ -79,6 +79,7 @@ export default function FormInput<T extends Record<string, string> = {}>(
     case INPUT_TYPE.TEXT:
       component = (
         <StyledInput
+          {...props}
           id={id}
           type={props.type}
           maxLength={props.maxLength}
@@ -90,6 +91,7 @@ export default function FormInput<T extends Record<string, string> = {}>(
     case INPUT_TYPE.SELECT:
       component = (
         <StyledSelect
+          {...props}
           value={props.value}
           onChange={(event) => props.onChange(event.target.value)}
           id={props.id}

@@ -37,7 +37,7 @@ export default function VerifyLogin() {
   return (
     <BaseAuthentication title="Verify Login" links={verifyLoginFormLinks}>
       <Form<VerifyLoginFields, VerifyLoginResponse>
-        {...{ isSubmitting, setIsSubmitting, onSuccess }}
+        {...{ isSubmitting, onSuccess }}
         submitButtonText="Verify Login"
         showSubmitButton
         data={{
@@ -45,7 +45,7 @@ export default function VerifyLogin() {
         }}
         mutation={VERIFY_LOGIN_MUTATION}
         setErrors={{
-          code: setCodeError,
+          code: (error) => setCodeError(error),
         }}
         fields={{
           code: {
@@ -54,6 +54,7 @@ export default function VerifyLogin() {
           },
         }}
         onError={(error) => console.log("error")}
+        setIsSubmitting={(val) => setIsSubmitting(val)}
       >
         <FormInput
           inputType={INPUT_TYPE.PIN}
